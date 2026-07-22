@@ -171,6 +171,13 @@ footer{padding-bottom:env(safe-area-inset-bottom,0)}
 .mimg img{width:100%;height:100%;object-fit:cover}
 .mclose{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:9px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.92);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:2}
 .mclose:hover{background:var(--white);border-color:var(--gold)}
+.mnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,.08);background:rgba(255,255,255,.9);color:var(--dark);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .15s,transform .1s}
+.mnav:hover{background:var(--white)}
+.mnav:active{transform:translateY(-50%) scale(.92)}
+.mprev{left:12px}.mnext{right:12px}
+.mdots{position:absolute;left:0;right:0;bottom:12px;display:flex;gap:7px;justify-content:center;align-items:center;z-index:2}
+.mdot{width:7px;height:7px;border-radius:50%;background:rgba(28,28,26,.28);cursor:pointer;transition:background .15s,transform .15s}
+.mdot.on{background:var(--gold);transform:scale(1.25)}
 .mbody{padding:28px;overflow-y:auto}
 .mbrand{font-size:11px;color:var(--light);font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
 .mname{font-size:19px;font-weight:500;line-height:1.3;margin-bottom:12px}
@@ -467,7 +474,10 @@ footer{background:var(--dark)}
   <div class="mbox">
     <div class="mimg" id="MIMG">
       <button class="mclose" onclick="closeModal()">✕</button>
+      <button class="mnav mprev hidden" id="MPREV" onclick="galStep(-1)" aria-label="Предыдущее фото">‹</button>
       <img id="MICON" src="" alt="">
+      <button class="mnav mnext hidden" id="MNEXT" onclick="galStep(1)" aria-label="Следующее фото">›</button>
+      <div class="mdots hidden" id="MDOTS"></div>
     </div>
     <div class="mbody">
       <div class="mbrand" id="MBRAND"></div>
@@ -551,6 +561,7 @@ footer{background:var(--dark)}
 <script src="data.js"></script>
 <script>
 var cart = [], wish = [], mProd = null, mQty = 1, curCat = 'all', curSearch = '';
+var mImgs = [], mImgIdx = 0;
 
 function render(cat) {
   curCat = cat || 'all';
@@ -683,7 +694,9 @@ function removeWish(i) { var pid = wish[i].id; wish.splice(i, 1); var btn = docu
 // ── MODAL ──
 function openModal(gi) {
   var p = P[gi]; mProd = p; mQty = 1;
-  document.getElementById('MICON').src = p.img;
+  mImgs = (p.images && p.images.length) ? p.images : (p.img ? [p.img] : []);
+  mImgIdx = 0;
+  renderGallery();
   document.getElementById('MIMG').style.background = '#f0f0ea';
   document.getElementById('MBRAND').textContent = getCatLabel(p.cat);
   document.getElementById('MNAME').textContent = p.name;
@@ -699,6 +712,50 @@ function openModal(gi) {
   addRecent(p.id);
 }
 function closeModal() { document.getElementById('MO').classList.remove('open'); document.body.style.overflow = ''; }
+
+// ── Галерея фото в модалке ──
+function renderGallery() {
+  var icon = document.getElementById('MICON');
+  var prev = document.getElementById('MPREV'), next = document.getElementById('MNEXT'), dots = document.getElementById('MDOTS');
+  var name = mProd ? mProd.name : '';
+  if (!mImgs.length) {
+    icon.src = ''; icon.alt = name; icon.style.visibility = 'hidden';
+    prev.classList.add('hidden'); next.classList.add('hidden'); dots.classList.add('hidden');
+    return;
+  }
+  icon.style.visibility = '';
+  if (mImgIdx < 0) mImgIdx = mImgs.length - 1;
+  if (mImgIdx >= mImgs.length) mImgIdx = 0;
+  icon.src = mImgs[mImgIdx];
+  icon.alt = name;
+  var many = mImgs.length > 1;
+  prev.classList.toggle('hidden', !many);
+  next.classList.toggle('hidden', !many);
+  if (many) {
+    var d = '';
+    for (var i = 0; i < mImgs.length; i++) d += '<span class="mdot' + (i === mImgIdx ? ' on' : '') + '" data-i="' + i + '"></span>';
+    dots.innerHTML = d;
+    dots.classList.remove('hidden');
+  } else {
+    dots.innerHTML = ''; dots.classList.add('hidden');
+  }
+}
+function galStep(d) { if (mImgs.length < 2) return; mImgIdx += d; renderGallery(); }
+// клик по точкам
+document.getElementById('MDOTS').addEventListener('click', function(e) {
+  var t = e.target.closest('[data-i]'); if (t) { mImgIdx = parseInt(t.getAttribute('data-i'), 10); renderGallery(); }
+});
+// свайп по фото на телефоне
+(function() {
+  var sx = 0, sy = 0, tracking = false;
+  var mimg = document.getElementById('MIMG');
+  mimg.addEventListener('touchstart', function(e) { var t = e.changedTouches[0]; sx = t.clientX; sy = t.clientY; tracking = true; }, { passive: true });
+  mimg.addEventListener('touchend', function(e) {
+    if (!tracking) return; tracking = false;
+    var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) galStep(dx < 0 ? 1 : -1);
+  }, { passive: true });
+})();
 function mq(d) { mQty = Math.max(1, mQty + d); document.getElementById('MQN').textContent = mQty; }
 function addFromModal() { if (!mProd) return; var gi = P.indexOf(mProd); addCart(gi, mQty); var btn = document.getElementById('MCART'); btn.textContent = '✓ Добавлено!'; setTimeout(function() { btn.textContent = '🛒 В корзину' }, 1500); }
 
