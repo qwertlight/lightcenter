@@ -29,19 +29,32 @@ function phoneMask(e) {
 }
 
 // ── Группировка категорий ──
+// Зонтичные группы для прямых ссылок (?cat=treki) и кнопки «Уличные».
+// Фильтр-бар при этом строится из плоского CAT_LIST/базы.
 var CATS = {
   'treki':     ['treki_48v','treki_220v'],
   'ulichnye':  ['ulichnye','fasad','sadovo_park'],
   'tochechnye':['spoty']
 };
 
-// ── Лейблы категорий ──
-var CAT_LABELS = {
-  'ulichnye':'Уличные','fasad':'Фасадные','sadovo_park':'Садово-парковые',
-  'treki_48v':'Треки 48V','treki_220v':'Треки 220V','spoty':'Споты',
-  'ofisnye':'Промышленные','lenty':'LED ленты','bloki_pitaniya':'Блоки питания',
-  'profili':'Профили','lampy':'Лампы','datchiki':'Датчики'
-};
+// ── Категории: упорядоченный список (fallback до загрузки из базы) ──
+var CAT_LIST = [
+  {slug:'treki_48v',label:'Треки 48V'},
+  {slug:'treki_220v',label:'Треки 220V'},
+  {slug:'ulichnye',label:'Уличные'},
+  {slug:'fasad',label:'Фасадные'},
+  {slug:'sadovo_park',label:'Садово-парковые'},
+  {slug:'spoty',label:'Споты'},
+  {slug:'ofisnye',label:'Промышленные'},
+  {slug:'lenty',label:'LED ленты'},
+  {slug:'bloki_pitaniya',label:'Блоки питания'},
+  {slug:'profili',label:'Профили'},
+  {slug:'lampy',label:'Лампы'},
+  {slug:'datchiki',label:'Датчики'}
+];
+var CAT_LABELS = {};
+function rebuildCatLabels() { CAT_LABELS = {}; for (var i = 0; i < CAT_LIST.length; i++) CAT_LABELS[CAT_LIST[i].slug] = CAT_LIST[i].label; }
+rebuildCatLabels();
 
 function getCatLabel(c) { return CAT_LABELS[c] || c; }
 
@@ -486,9 +499,30 @@ async function refreshProducts() {
   }
 }
 
-// Стартуем загрузку как можно раньше; страницы перерисуются по событию 'lc:products-loaded'.
+// ── Подтягивание категорий из Supabase (fallback — встроенный CAT_LIST) ──
+async function refreshCategories() {
+  try {
+    var res = await fetch(SB_URL + '/rest/v1/categories?select=slug,label&order=sort_order.asc', {
+      headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+    });
+    if (!res.ok) return false;
+    var rows = await res.json();
+    if (!Array.isArray(rows) || !rows.length) return false;
+    CAT_LIST = rows.map(function(r) { return { slug: r.slug, label: r.label }; });
+    rebuildCatLabels();
+    document.dispatchEvent(new CustomEvent('lc:categories-loaded', { detail: { count: CAT_LIST.length } }));
+    return true;
+  } catch (e) {
+    console.warn('[LightCenter] Категории из базы недоступны — работаем на встроенном списке.', e);
+    return false;
+  }
+}
+
+function refreshAll() { refreshCategories(); refreshProducts(); }
+
+// Стартуем загрузку как можно раньше; страницы перерисуются по событиям lc:*-loaded.
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', refreshProducts);
+  document.addEventListener('DOMContentLoaded', refreshAll);
 } else {
-  refreshProducts();
+  refreshAll();
 }
