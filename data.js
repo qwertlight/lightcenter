@@ -466,7 +466,7 @@ function findByIds(ids) {
 // При успехе P обновляется на месте (ссылки/индексы остаются валидны) и шлётся событие.
 async function refreshProducts() {
   try {
-    var res = await fetch(SB_URL + '/rest/v1/products?select=id,name,price,cat,unit,img,badge,description&active=eq.true&order=sort_order.asc', {
+    var res = await fetch(SB_URL + '/rest/v1/products?select=id,name,price,cat,unit,img,badge,description,images&active=eq.true&order=sort_order.asc', {
       headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
     });
     if (!res.ok) return false;
@@ -474,7 +474,7 @@ async function refreshProducts() {
     if (!Array.isArray(rows) || !rows.length) return false;
     var mapped = rows.map(function(r) {
       // description (в базе) -> desc (для кода каталога)
-      return { id: r.id, name: r.name, price: r.price, cat: r.cat, unit: r.unit || 'шт', img: r.img || '', badge: r.badge || '', desc: r.description || '' };
+      return { id: r.id, name: r.name, price: r.price, cat: r.cat, unit: r.unit || 'шт', img: r.img || '', badge: r.badge || '', desc: r.description || '', images: Array.isArray(r.images) ? r.images : [] };
     });
     P.length = 0;
     Array.prototype.push.apply(P, mapped);
