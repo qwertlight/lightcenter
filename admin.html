@@ -116,6 +116,19 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .sheet-foot .btn-primary{width:auto;flex:1}
 .sheet-foot .btn-ghost,.sheet-foot .btn-danger{flex:0 0 auto;min-height:46px;border-radius:10px}
 
+.cat-add{display:flex;gap:8px;margin-bottom:14px}
+.cat-add input{flex:1;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--cream)}
+.cat-add input:focus{outline:none;border-color:var(--gold);background:var(--white)}
+.cat-list{display:flex;flex-direction:column;gap:6px}
+.cat-row{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:10px;padding:6px 8px}
+.cat-reorder{display:flex;flex-direction:column;gap:2px}
+.cat-reorder button{width:26px;height:20px;border:1px solid var(--border);background:var(--cream);border-radius:5px;font-size:11px;color:var(--mid);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.cat-reorder button:disabled{opacity:.35;cursor:default}
+.cat-label{flex:1;min-width:0;padding:9px 11px;border:1px solid transparent;border-radius:8px;background:var(--cream);font-size:14px}
+.cat-label:focus{outline:none;border-color:var(--gold);background:var(--white)}
+.cat-count{font-size:12px;color:var(--light);white-space:nowrap}
+.cat-del{width:34px;height:34px;min-width:34px;border:1px solid #F1D5D1;background:var(--danger-bg);color:var(--danger);border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center}
+
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:80;opacity:0;transition:transform .25s,opacity .25s;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast.err{background:var(--danger)}
@@ -142,6 +155,7 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
   <header class="topbar">
     <div class="brand"><span class="brand-dot">L</span>LightCenter <span class="count" id="COUNT"></span></div>
     <div class="spacer"></div>
+    <button class="btn-ghost" id="CATS_BTN">Категории</button>
     <button class="btn-ghost" id="LOGOUT_BTN">Выйти</button>
   </header>
   <div class="wrap">
@@ -199,6 +213,26 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
   </div>
 </div>
 
+<!-- CATEGORIES SHEET -->
+<div class="overlay" id="CATMODAL">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Категории</h2>
+      <button class="x" id="CAT_X" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="cat-add">
+        <input type="text" id="CAT_NEW" placeholder="Новая категория, напр. «Умный свет»">
+        <button class="btn-add" id="CAT_ADD">Добавить</button>
+      </div>
+      <div class="cat-list" id="CAT_LIST_M"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" id="CAT_CLOSE" style="flex:1">Готово</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="TOAST"></div>
 
 <script>
@@ -240,12 +274,15 @@ function showLogin(){$('APP').classList.add('hidden');$('LOGIN').classList.remov
 function showApp(){$('LOGIN').classList.add('hidden');$('APP').classList.remove('hidden');loadAll();}
 
 // ══ ДАННЫЕ ══
+async function loadCategories(){
+  var cr=await sb.from('categories').select('slug,label,sort_order').order('sort_order');
+  if(cr.error)throw cr.error;
+  cats=cr.data||[];catLabel={};cats.forEach(function(c){catLabel[c.slug]=c.label;});
+  fillCatControls();
+}
 async function loadAll(){
   try{
-    var cr=await sb.from('categories').select('slug,label').order('sort_order');
-    if(cr.error)throw cr.error;
-    cats=cr.data||[];catLabel={};cats.forEach(function(c){catLabel[c.slug]=c.label;});
-    fillCatControls();
+    await loadCategories();
     await reloadProducts();
   }catch(e){toast('Не удалось загрузить каталог. Обновите страницу.',true);}
 }
@@ -436,6 +473,77 @@ async function deleteProduct(){
   finally{btn.disabled=false;btn.textContent='Удалить';}
 }
 
+// ══ КАТЕГОРИИ ══
+var TRANSLIT={'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'c','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};
+function translit(s){var o='';s=String(s).toLowerCase();for(var i=0;i<s.length;i++){o+=(TRANSLIT[s[i]]!==undefined?TRANSLIT[s[i]]:s[i]);}return o;}
+function slugify(label){var s=translit(label).replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');return s||'cat';}
+function uniqueSlug(base){var have={};cats.forEach(function(c){have[c.slug]=1;});var s=base,n=2;while(have[s]){s=base+'_'+n;n++;}return s;}
+function catProductCount(slug){var n=0;for(var i=0;i<products.length;i++)if(products[i].cat===slug)n++;return n;}
+
+function openCatManager(){renderCatManager();$('CATMODAL').classList.add('open');lockScroll(true);}
+function closeCatManager(){$('CATMODAL').classList.remove('open');lockScroll(false);}
+function renderCatManager(){
+  var el=$('CAT_LIST_M'),h='';
+  for(var i=0;i<cats.length;i++){
+    var c=cats[i],cnt=catProductCount(c.slug);
+    h+='<div class="cat-row">'
+      +'<div class="cat-reorder"><button data-up="'+i+'"'+(i===0?' disabled':'')+' aria-label="Выше">↑</button><button data-down="'+i+'"'+(i===cats.length-1?' disabled':'')+' aria-label="Ниже">↓</button></div>'
+      +'<input class="cat-label" data-slug="'+esc(c.slug)+'" value="'+esc(c.label)+'">'
+      +'<span class="cat-count">'+cnt+' тов.</span>'
+      +'<button class="cat-del" data-del="'+esc(c.slug)+'" aria-label="Удалить">✕</button>'
+      +'</div>';
+  }
+  el.innerHTML=h;
+}
+async function addCategory(){
+  var label=$('CAT_NEW').value.trim();
+  if(label.length<2){toast('Введите название категории',true);return;}
+  var slug=uniqueSlug(slugify(label));
+  var maxS=0;cats.forEach(function(c){if((c.sort_order||0)>maxS)maxS=c.sort_order;});
+  var btn=$('CAT_ADD');btn.disabled=true;
+  try{
+    var res=await sb.from('categories').insert({slug:slug,label:label,sort_order:maxS+10}).select();
+    if(res.error)throw res.error;
+    $('CAT_NEW').value='';
+    await loadCategories();renderCatManager();
+    toast('Категория добавлена');
+  }catch(e){toast('Не удалось добавить категорию',true);}
+  finally{btn.disabled=false;}
+}
+async function renameCategory(slug,label){
+  label=label.trim();
+  if(label.length<2){toast('Название слишком короткое',true);await loadCategories();renderCatManager();return;}
+  try{
+    var res=await sb.from('categories').update({label:label}).eq('slug',slug).select();
+    if(res.error)throw res.error;
+    await loadCategories();renderList();renderCatManager();
+    toast('Сохранено');
+  }catch(e){toast('Не удалось переименовать',true);}
+}
+async function deleteCategory(slug){
+  var cnt=catProductCount(slug);
+  if(cnt>0){toast('Нельзя удалить: в категории '+cnt+' товаров. Сначала перенесите их.',true);return;}
+  var c=cats.find(function(x){return x.slug===slug;});
+  if(!window.confirm('Удалить категорию «'+(c?c.label:slug)+'»?'))return;
+  try{
+    var res=await sb.from('categories').delete().eq('slug',slug);
+    if(res.error)throw res.error;
+    await loadCategories();renderCatManager();
+    toast('Категория удалена');
+  }catch(e){toast('Не удалось удалить',true);}
+}
+async function moveCategory(i,dir){
+  var j=i+dir;if(j<0||j>=cats.length)return;
+  var a=cats[i],b=cats[j],tmp=a.sort_order;a.sort_order=b.sort_order;b.sort_order=tmp;
+  try{
+    await Promise.all([
+      sb.from('categories').update({sort_order:a.sort_order}).eq('slug',a.slug),
+      sb.from('categories').update({sort_order:b.sort_order}).eq('slug',b.slug)
+    ]);
+    await loadCategories();renderCatManager();
+  }catch(e){toast('Не удалось изменить порядок',true);await loadCategories();renderCatManager();}
+}
+
 // ══ СОБЫТИЯ ══
 $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
@@ -455,6 +563,22 @@ $('EDIT_CANCEL').addEventListener('click',closeEdit);
 $('EDIT_SAVE').addEventListener('click',saveEdit);
 $('DELETE_BTN').addEventListener('click',deleteProduct);
 $('EDIT').addEventListener('click',function(e){if(e.target===this)closeEdit();});
+
+// категории
+$('CATS_BTN').addEventListener('click',openCatManager);
+$('CAT_X').addEventListener('click',closeCatManager);
+$('CAT_CLOSE').addEventListener('click',closeCatManager);
+$('CAT_ADD').addEventListener('click',addCategory);
+$('CAT_NEW').addEventListener('keydown',function(e){if(e.key==='Enter')addCategory();});
+$('CATMODAL').addEventListener('click',function(e){if(e.target===this)closeCatManager();});
+$('CAT_LIST_M').addEventListener('click',function(e){
+  var up=e.target.closest('[data-up]');if(up){moveCategory(parseInt(up.getAttribute('data-up'),10),-1);return;}
+  var dn=e.target.closest('[data-down]');if(dn){moveCategory(parseInt(dn.getAttribute('data-down'),10),1);return;}
+  var del=e.target.closest('[data-del]');if(del){deleteCategory(del.getAttribute('data-del'));return;}
+});
+$('CAT_LIST_M').addEventListener('change',function(e){
+  var inp=e.target.closest('.cat-label');if(inp)renameCategory(inp.getAttribute('data-slug'),inp.value);
+});
 
 // ══ СТАРТ ══
 if(sb){
