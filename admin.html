@@ -24,12 +24,10 @@ button{font-family:var(--fb);cursor:pointer}
 input,select,textarea{font-family:var(--fb);font-size:15px}
 .hidden{display:none!important}
 
-/* ── Brand mark ── */
 .brand{display:flex;align-items:center;gap:9px;font-weight:600;letter-spacing:.2px}
 .brand-dot{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--gold),var(--gold-d));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--fd);font-size:18px;font-weight:600;flex-shrink:0}
-.brand small{color:var(--light);font-weight:400}
 
-/* ── LOGIN ── */
+/* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
 .login-card{width:100%;max-width:380px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px 28px}
 .login-card .brand{justify-content:center;margin-bottom:6px;font-size:18px}
@@ -43,26 +41,27 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .btn-primary{background:var(--gold);color:#fff;width:100%;font-size:15px}
 .btn-primary:hover{background:var(--gold-d)}
 .btn-primary:disabled{opacity:.55;cursor:default}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border:1px solid #F1D5D1}
+.btn-danger:hover{background:#F7E0DD}
 .msg{font-size:13px;padding:10px 12px;border-radius:9px;margin-bottom:14px}
 .msg-err{background:var(--danger-bg);color:var(--danger)}
-.msg-ok{background:var(--ok-bg);color:var(--ok)}
 
-/* ── APP SHELL ── */
+/* SHELL */
 .topbar{position:sticky;top:0;z-index:20;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:12px 20px}
 .topbar .brand{font-size:16px}
 .topbar .count{color:var(--light);font-size:13px;margin-left:2px}
 .topbar .spacer{flex:1}
 .btn-ghost{background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--mid);min-height:40px;padding:0 14px;font-size:14px;font-weight:500}
 .btn-ghost:hover{border-color:var(--gold);color:var(--dark)}
+.btn-add{background:var(--gold);color:#fff;border:none;border-radius:9px;min-height:44px;padding:0 16px;font-weight:600;font-size:14px}
+.btn-add:active{transform:scale(.98)}
 .wrap{max-width:1100px;margin:0 auto;padding:20px}
 
-/* ── TOOLBAR ── */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .toolbar input,.toolbar select{padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--white)}
-.toolbar input{flex:1;min-width:200px}
+.toolbar input{flex:1;min-width:180px}
 .toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--gold)}
 
-/* ── PRODUCT ROWS ── */
 .list{display:flex;flex-direction:column;gap:8px}
 .row{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
 .row.is-hidden{opacity:.55}
@@ -73,80 +72,89 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .row-meta{display:flex;gap:8px;align-items:center;margin-top:3px;flex-wrap:wrap}
 .tag{font-size:11px;color:var(--gold-d);background:var(--gold-p);border:1px solid var(--gold-l);padding:1px 8px;border-radius:6px}
 .tag-off{color:var(--danger);background:var(--danger-bg);border-color:#F1D5D1}
+.tag-photos{color:var(--mid);background:var(--soft);border-color:var(--border)}
 .row-price{font-weight:600;font-size:15px;white-space:nowrap}
 .row-edit{background:var(--dark);color:#fff;border:none;border-radius:9px;min-height:40px;min-width:44px;padding:0 16px;font-size:14px;font-weight:500}
 .row-edit:active{transform:scale(.97)}
 .empty{text-align:center;color:var(--mid);padding:60px 20px}
 
-/* ── MODAL ── */
+/* MODAL */
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(28,28,26,.45);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:auto}
-.sheet{width:100%;max-width:560px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--white);border-radius:16px 16px 0 0;transform:translateY(24px);transition:transform .2s}
+.sheet{width:100%;max-width:560px;max-height:94vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--white);border-radius:16px 16px 0 0;transform:translateY(24px);transition:transform .2s}
 .overlay.open .sheet{transform:translateY(0)}
-.sheet-head{position:sticky;top:0;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.sheet-head{position:sticky;top:0;z-index:2;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
 .sheet-head h2{font-family:var(--fb);font-size:16px;font-weight:600}
 .x{width:36px;height:36px;border-radius:9px;border:1px solid var(--border);background:var(--white);font-size:18px;color:var(--mid);display:flex;align-items:center;justify-content:center}
 .sheet-body{padding:20px}
-.field textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream);resize:vertical;min-height:120px;line-height:1.5}
+
+/* PHOTOS */
+.photos-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.photos-head label{font-size:12px;font-weight:500;color:var(--mid)}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-bottom:10px}
+.ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--soft)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph-cover{position:absolute;left:4px;top:4px;background:var(--gold);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:5px}
+.ph-x{position:absolute;right:3px;top:3px;width:24px;height:24px;border-radius:6px;border:none;background:rgba(28,28,26,.72);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+.ph-star{position:absolute;left:0;right:0;bottom:0;border:none;background:rgba(28,28,26,.72);color:#fff;font-size:11px;padding:4px 0}
+.photos-empty{color:var(--light);font-size:13px;padding:18px;text-align:center;border:1px dashed var(--border);border-radius:10px;margin-bottom:10px}
+.upload-btn{width:100%;border:1px dashed var(--gold);background:var(--gold-p);color:var(--gold-d);border-radius:10px;min-height:46px;font-weight:600;font-size:14px}
+.upload-btn:active{transform:scale(.99)}
+.upload-btn:disabled{opacity:.6}
+.upload-note{font-size:12px;color:var(--light);margin-top:6px;text-align:center}
+
+.field textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream);resize:vertical;min-height:110px;line-height:1.5}
 .field select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream)}
-.field textarea:focus,.field select:focus{outline:none;border-color:var(--gold);background:var(--white)}
+.field input[type=text],.field input[type=number]{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream)}
+.field textarea:focus,.field select:focus,.field input:focus{outline:none;border-color:var(--gold);background:var(--white)}
+.hr{height:1px;background:var(--border);margin:18px 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .chk{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--cream);cursor:pointer}
 .chk input{width:20px;height:20px;accent-color:var(--gold)}
 .chk span{font-size:14px}
 .sheet-foot{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--white)}
 .sheet-foot .btn-primary{width:auto;flex:1}
-.sheet-foot .btn-ghost{flex:0 0 auto}
+.sheet-foot .btn-ghost,.sheet-foot .btn-danger{flex:0 0 auto;min-height:46px;border-radius:10px}
 
-/* ── TOAST ── */
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:80;opacity:0;transition:transform .25s,opacity .25s;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast.err{background:var(--danger)}
 
-@media(min-width:640px){
-  .overlay{align-items:center}
-  .sheet{border-radius:16px}
-}
+@media(min-width:640px){.overlay{align-items:center}.sheet{border-radius:16px}}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
+<!-- LOGIN -->
 <div class="login-wrap" id="LOGIN">
   <div class="login-card">
     <div class="brand"><span class="brand-dot">L</span>LightCenter</div>
     <p class="login-sub">Панель управления каталогом</p>
     <div class="msg msg-err hidden" id="LOGIN_MSG"></div>
-    <div class="field">
-      <label for="EMAIL">Email</label>
-      <input type="email" id="EMAIL" autocomplete="username" placeholder="you@example.com">
-    </div>
-    <div class="field">
-      <label for="PASS">Пароль</label>
-      <input type="password" id="PASS" autocomplete="current-password" placeholder="••••••••">
-    </div>
+    <div class="field"><label for="EMAIL">Email</label><input type="email" id="EMAIL" autocomplete="username" placeholder="you@example.com"></div>
+    <div class="field"><label for="PASS">Пароль</label><input type="password" id="PASS" autocomplete="current-password" placeholder="••••••••"></div>
     <button class="btn btn-primary" id="LOGIN_BTN">Войти</button>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div class="hidden" id="APP">
   <header class="topbar">
     <div class="brand"><span class="brand-dot">L</span>LightCenter <span class="count" id="COUNT"></span></div>
     <div class="spacer"></div>
     <button class="btn-ghost" id="LOGOUT_BTN">Выйти</button>
   </header>
-
   <div class="wrap">
     <div class="toolbar">
       <input type="search" id="SEARCH" placeholder="Поиск по названию…">
       <select id="CATFILTER"><option value="all">Все категории</option></select>
+      <button class="btn-add" id="ADD_BTN">+ Товар</button>
     </div>
     <div class="list" id="LIST"></div>
   </div>
 </div>
 
-<!-- ══ EDIT SHEET ══ -->
+<!-- EDIT / CREATE SHEET -->
 <div class="overlay" id="EDIT">
   <div class="sheet">
     <div class="sheet-head">
@@ -154,27 +162,24 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
       <button class="x" id="EDIT_X" aria-label="Закрыть">✕</button>
     </div>
     <div class="sheet-body">
-      <div class="field">
-        <label for="F_NAME">Название</label>
-        <input type="text" id="F_NAME">
+      <!-- Фото -->
+      <div class="photos-head"><label>Фото <span id="PH_COUNT" style="color:var(--light)"></span></label></div>
+      <div class="photos hidden" id="F_PHOTOS"></div>
+      <div class="photos-empty" id="F_PHOTOS_EMPTY">Фото пока нет. Первое загруженное станет обложкой в каталоге.</div>
+      <input type="file" id="F_FILE" accept="image/*" multiple class="hidden">
+      <button class="upload-btn" id="UPLOAD_BTN">＋ Загрузить фото</button>
+      <div class="upload-note" id="UPLOAD_NOTE"></div>
+
+      <div class="hr"></div>
+
+      <div class="field"><label for="F_NAME">Название</label><input type="text" id="F_NAME"></div>
+      <div class="grid2">
+        <div class="field"><label for="F_PRICE">Цена, ₸</label><input type="number" id="F_PRICE" min="0" step="1" inputmode="numeric"></div>
+        <div class="field"><label for="F_UNIT">Единица</label><input type="text" id="F_UNIT" placeholder="шт"></div>
       </div>
       <div class="grid2">
-        <div class="field">
-          <label for="F_PRICE">Цена, ₸</label>
-          <input type="number" id="F_PRICE" min="0" step="1" inputmode="numeric">
-        </div>
-        <div class="field">
-          <label for="F_UNIT">Единица</label>
-          <input type="text" id="F_UNIT" placeholder="шт">
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label for="F_CAT">Категория</label>
-          <select id="F_CAT"></select>
-        </div>
-        <div class="field">
-          <label for="F_BADGE">Метка</label>
+        <div class="field"><label for="F_CAT">Категория</label><select id="F_CAT"></select></div>
+        <div class="field"><label for="F_BADGE">Метка</label>
           <select id="F_BADGE">
             <option value="">Без метки</option>
             <option value="new">Новинка</option>
@@ -183,16 +188,11 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
           </select>
         </div>
       </div>
-      <div class="field">
-        <label for="F_DESC">Описание</label>
-        <textarea id="F_DESC"></textarea>
-      </div>
-      <label class="chk" for="F_ACTIVE">
-        <input type="checkbox" id="F_ACTIVE" checked>
-        <span>Показывать на сайте</span>
-      </label>
+      <div class="field"><label for="F_DESC">Описание</label><textarea id="F_DESC"></textarea></div>
+      <label class="chk" for="F_ACTIVE"><input type="checkbox" id="F_ACTIVE" checked><span>Показывать на сайте</span></label>
     </div>
     <div class="sheet-foot">
+      <button class="btn-danger hidden" id="DELETE_BTN">Удалить</button>
       <button class="btn-ghost" id="EDIT_CANCEL">Отмена</button>
       <button class="btn btn-primary" id="EDIT_SAVE">Сохранить</button>
     </div>
@@ -202,98 +202,74 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 <div class="toast" id="TOAST"></div>
 
 <script>
-// ── Config (публичный ключ безопасен в браузере: доступ ограничен политиками RLS) ──
+// ── Config (публичный ключ безопасен: доступ ограничен политиками RLS) ──
 var SB_URL = 'https://njpkjbswntwyutvqwhpo.supabase.co';
 var SB_KEY = 'sb_publishable_ogNop89gYSByY323DSywPw_4ssY0LP1';
+var BUCKET = 'product-photos';
 
-// ── Проверка, что библиотека загрузилась ──
 if (!window.supabase) {
-  document.getElementById('LOGIN_MSG').textContent = 'Не удалось загрузить компоненты. Проверьте интернет и обновите страницу.';
-  document.getElementById('LOGIN_MSG').classList.remove('hidden');
+  var lm=document.getElementById('LOGIN_MSG');lm.textContent='Не удалось загрузить компоненты. Проверьте интернет и обновите страницу.';lm.classList.remove('hidden');
 }
 var sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
 
 // ── Состояние ──
-var products = [];   // все товары из базы
-var cats = [];       // категории [{slug,label}]
-var catLabel = {};   // slug -> label
-var editingId = null;
+var products=[], cats=[], catLabel={};
+var editingId=null, editMode='edit', editImages=[];
 
 // ── Утилиты ──
+function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtPrice(n){return Number(n).toLocaleString('ru')+' ₸';}
-function $(id){return document.getElementById(id);}
-function toast(msg,isErr){
-  var t=$('TOAST');t.textContent=msg;t.className='toast show'+(isErr?' err':'');
-  setTimeout(function(){t.className='toast';},2600);
-}
+function toast(msg,isErr){var t=$('TOAST');t.textContent=msg;t.className='toast show'+(isErr?' err':'');setTimeout(function(){t.className='toast';},2600);}
 function lockScroll(on){document.body.style.overflow=on?'hidden':'';}
 
 // ══ AUTH ══
 async function handleLogin(){
   var msg=$('LOGIN_MSG');msg.classList.add('hidden');
-  var email=$('EMAIL').value.trim();
-  var pass=$('PASS').value;
+  var email=$('EMAIL').value.trim(), pass=$('PASS').value;
   if(!email||!pass){msg.textContent='Введите email и пароль.';msg.classList.remove('hidden');return;}
   var btn=$('LOGIN_BTN');btn.disabled=true;btn.textContent='Вход…';
   try{
     var res=await sb.auth.signInWithPassword({email:email,password:pass});
-    if(res.error){
-      msg.textContent='Неверный email или пароль.';
-      msg.classList.remove('hidden');
-    }
-    // при успехе onAuthStateChange покажет приложение
-  }catch(e){
-    msg.textContent='Ошибка соединения. Попробуйте ещё раз.';
-    msg.classList.remove('hidden');
-  }finally{
-    btn.disabled=false;btn.textContent='Войти';
-  }
+    if(res.error){msg.textContent='Неверный email или пароль.';msg.classList.remove('hidden');}
+  }catch(e){msg.textContent='Ошибка соединения. Попробуйте ещё раз.';msg.classList.remove('hidden');}
+  finally{btn.disabled=false;btn.textContent='Войти';}
 }
+async function handleLogout(){try{await sb.auth.signOut();}catch(e){}}
+function showLogin(){$('APP').classList.add('hidden');$('LOGIN').classList.remove('hidden');$('PASS').value='';}
+function showApp(){$('LOGIN').classList.add('hidden');$('APP').classList.remove('hidden');loadAll();}
 
-async function handleLogout(){
-  try{await sb.auth.signOut();}catch(e){}
-}
-
-function showLogin(){
-  $('APP').classList.add('hidden');
-  $('LOGIN').classList.remove('hidden');
-  $('PASS').value='';
-}
-function showApp(){
-  $('LOGIN').classList.add('hidden');
-  $('APP').classList.remove('hidden');
-  loadAll();
-}
-
-// ══ ЗАГРУЗКА ДАННЫХ ══
+// ══ ДАННЫЕ ══
 async function loadAll(){
   try{
     var cr=await sb.from('categories').select('slug,label').order('sort_order');
     if(cr.error)throw cr.error;
-    cats=cr.data||[];
-    catLabel={};cats.forEach(function(c){catLabel[c.slug]=c.label;});
+    cats=cr.data||[];catLabel={};cats.forEach(function(c){catLabel[c.slug]=c.label;});
     fillCatControls();
-
-    var pr=await sb.from('products').select('*').order('sort_order');
-    if(pr.error)throw pr.error;
-    products=pr.data||[];
-    renderList();
-  }catch(e){
-    toast('Не удалось загрузить каталог. Обновите страницу.',true);
-  }
+    await reloadProducts();
+  }catch(e){toast('Не удалось загрузить каталог. Обновите страницу.',true);}
 }
-
+async function reloadProducts(){
+  var pr=await sb.from('products').select('*').order('sort_order');
+  if(pr.error)throw pr.error;
+  products=pr.data||[];
+  renderList();
+}
 function fillCatControls(){
   var opts=cats.map(function(c){return '<option value="'+esc(c.slug)+'">'+esc(c.label)+'</option>';}).join('');
   $('CATFILTER').innerHTML='<option value="all">Все категории</option>'+opts;
   $('F_CAT').innerHTML=opts;
 }
+// список фото товара (совместимо со старым одиночным img)
+function imagesOf(p){
+  if(p.images&&p.images.length)return p.images.slice();
+  if(p.img)return [p.img];
+  return [];
+}
 
 // ══ СПИСОК ══
 function renderList(){
-  var q=$('SEARCH').value.trim().toLowerCase();
-  var cf=$('CATFILTER').value;
+  var q=$('SEARCH').value.trim().toLowerCase(), cf=$('CATFILTER').value;
   var rows=products.filter(function(p){
     if(cf!=='all'&&p.cat!==cf)return false;
     if(q&&(p.name||'').toLowerCase().indexOf(q)===-1)return false;
@@ -304,77 +280,160 @@ function renderList(){
   if(!rows.length){el.innerHTML='<div class="empty">Ничего не найдено.</div>';return;}
   var h='';
   for(var i=0;i<rows.length;i++){
-    var p=rows[i];
-    var img=p.img?'<img class="thumb" src="'+esc(p.img)+'" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;thumb-ph&quot;>◾</div>\'">':'<div class="thumb-ph">◾</div>';
+    var p=rows[i], imgs=imagesOf(p);
+    var cover=imgs[0];
+    var thumb=cover?'<img class="thumb" src="'+esc(cover)+'" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;thumb-ph&quot;>◾</div>\'">':'<div class="thumb-ph">◾</div>';
     var badge=p.badge?'<span class="tag">'+esc(p.badge==='new'?'Новинка':p.badge==='sale'?'Акция':p.badge==='hit'?'Хит':p.badge)+'</span>':'';
     var off=p.active?'':'<span class="tag tag-off">Скрыт</span>';
-    h+='<div class="row'+(p.active?'':' is-hidden')+'">'
-      +img
-      +'<div class="row-main">'
-      +'<div class="row-name">'+esc(p.name)+'</div>'
-      +'<div class="row-meta"><span class="tag">'+esc(catLabel[p.cat]||p.cat)+'</span>'+badge+off+'</div>'
-      +'</div>'
+    var pc=imgs.length?'<span class="tag tag-photos">📷 '+imgs.length+'</span>':'<span class="tag tag-photos">без фото</span>';
+    h+='<div class="row'+(p.active?'':' is-hidden')+'">'+thumb
+      +'<div class="row-main"><div class="row-name">'+esc(p.name)+'</div>'
+      +'<div class="row-meta"><span class="tag">'+esc(catLabel[p.cat]||p.cat)+'</span>'+pc+badge+off+'</div></div>'
       +'<div class="row-price">'+fmtPrice(p.price)+'</div>'
-      +'<button class="row-edit" data-id="'+p.id+'">Изменить</button>'
-      +'</div>';
+      +'<button class="row-edit" data-id="'+p.id+'">Изменить</button></div>';
   }
   el.innerHTML=h;
 }
 
-// ══ РЕДАКТИРОВАНИЕ ══
-function openEdit(id){
-  var p=products.find(function(x){return x.id===id;});
-  if(!p)return;
-  editingId=id;
-  $('EDIT_TITLE').textContent='#'+p.id+' · изменить';
+// ══ ФОРМА: открыть ══
+function fillForm(p){
   $('F_NAME').value=p.name||'';
   $('F_PRICE').value=p.price!=null?p.price:'';
   $('F_UNIT').value=p.unit||'шт';
-  $('F_CAT').value=p.cat||'';
+  $('F_CAT').value=p.cat||(cats[0]&&cats[0].slug)||'';
   $('F_BADGE').value=p.badge||'';
   $('F_DESC').value=p.description||'';
-  $('F_ACTIVE').checked=!!p.active;
-  $('EDIT').classList.add('open');
-  lockScroll(true);
+  $('F_ACTIVE').checked=p.active!==false;
+  editImages=imagesOf(p);
+  renderEditPhotos();
 }
-function closeEdit(){
-  $('EDIT').classList.remove('open');
-  lockScroll(false);
-  editingId=null;
+function openEdit(id){
+  var p=products.find(function(x){return x.id===id;});
+  if(!p)return;
+  editMode='edit';editingId=id;
+  $('EDIT_TITLE').textContent='#'+p.id+' · изменить';
+  $('DELETE_BTN').classList.remove('hidden');
+  fillForm(p);
+  $('EDIT').classList.add('open');lockScroll(true);
+}
+function openCreate(){
+  editMode='create';editingId=null;
+  $('EDIT_TITLE').textContent='Новый товар';
+  $('DELETE_BTN').classList.add('hidden');
+  fillForm({active:true});
+  $('EDIT').classList.add('open');lockScroll(true);
+}
+function closeEdit(){$('EDIT').classList.remove('open');lockScroll(false);editingId=null;editImages=[];}
+
+// ══ ФОТО ══
+function renderEditPhotos(){
+  $('PH_COUNT').textContent=editImages.length?'· '+editImages.length:'';
+  var box=$('F_PHOTOS'), empty=$('F_PHOTOS_EMPTY');
+  if(!editImages.length){box.classList.add('hidden');box.innerHTML='';empty.classList.remove('hidden');return;}
+  empty.classList.add('hidden');box.classList.remove('hidden');
+  var h='';
+  for(var i=0;i<editImages.length;i++){
+    var u=editImages[i];
+    h+='<div class="ph">'
+      +'<img src="'+esc(u)+'" alt="">'
+      +(i===0?'<span class="ph-cover">Обложка</span>':'<button class="ph-star" data-star="'+i+'">Сделать обложкой</button>')
+      +'<button class="ph-x" data-del="'+i+'" aria-label="Удалить фото">✕</button>'
+      +'</div>';
+  }
+  box.innerHTML=h;
+}
+function fileExt(name){var m=/\.([a-zA-Z0-9]+)$/.exec(name||'');return m?m[1].toLowerCase():'jpg';}
+async function handleFiles(files){
+  if(!files||!files.length)return;
+  var btn=$('UPLOAD_BTN');btn.disabled=true;
+  var ok=0,fail=0;
+  for(var i=0;i<files.length;i++){
+    var f=files[i];
+    $('UPLOAD_NOTE').textContent='Загрузка '+(i+1)+' из '+files.length+'…';
+    try{
+      var path='products/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+fileExt(f.name);
+      var up=await sb.storage.from(BUCKET).upload(path,f,{cacheControl:'3600',upsert:false});
+      if(up.error)throw up.error;
+      var pub=sb.storage.from(BUCKET).getPublicUrl(path);
+      editImages.push(pub.data.publicUrl);
+      ok++;renderEditPhotos();
+    }catch(e){fail++;}
+  }
+  $('UPLOAD_NOTE').textContent=fail?('Загружено: '+ok+', с ошибкой: '+fail):'';
+  btn.disabled=false;
+  $('F_FILE').value='';
+  if(ok)toast(ok+' фото загружено'+(fail?', '+fail+' не удалось':''),fail>0);
+  else if(fail)toast('Не удалось загрузить фото',true);
+}
+function removePhotoFromStorage(url){
+  try{
+    var marker='/'+BUCKET+'/';
+    var idx=url.indexOf(marker);
+    if(idx===-1)return; // не наше хранилище — пропускаем
+    var path=url.substring(idx+marker.length).split('?')[0];
+    sb.storage.from(BUCKET).remove([path]); // фоново, не ждём
+  }catch(e){}
+}
+function removePhoto(i){
+  var url=editImages[i];
+  editImages.splice(i,1);
+  removePhotoFromStorage(url);
+  renderEditPhotos();
+}
+function makeCover(i){
+  if(i<=0)return;
+  var u=editImages.splice(i,1)[0];
+  editImages.unshift(u);
+  renderEditPhotos();
 }
 
+// ══ СОХРАНЕНИЕ ══
+function maxSort(){var m=0;for(var i=0;i<products.length;i++){if((products[i].sort_order||0)>m)m=products[i].sort_order;}return m;}
 async function saveEdit(){
-  if(editingId==null)return;
   var name=$('F_NAME').value.trim();
-  var priceRaw=$('F_PRICE').value.trim();
-  var price=parseInt(priceRaw,10);
+  var price=parseInt($('F_PRICE').value.trim(),10);
   if(name.length<2){toast('Укажите название.',true);return;}
   if(isNaN(price)||price<0){toast('Проверьте цену.',true);return;}
-
   var payload={
-    name:name,
-    price:price,
-    cat:$('F_CAT').value,
-    unit:$('F_UNIT').value.trim()||'шт',
-    badge:$('F_BADGE').value,
-    description:$('F_DESC').value.trim(),
-    active:$('F_ACTIVE').checked
+    name:name, price:price, cat:$('F_CAT').value,
+    unit:$('F_UNIT').value.trim()||'шт', badge:$('F_BADGE').value,
+    description:$('F_DESC').value.trim(), active:$('F_ACTIVE').checked,
+    images:editImages, img:editImages[0]||''
   };
   var btn=$('EDIT_SAVE');btn.disabled=true;btn.textContent='Сохранение…';
   try{
-    var res=await sb.from('products').update(payload).eq('id',editingId).select();
-    if(res.error)throw res.error;
-    // обновляем локальную копию
-    var idx=products.findIndex(function(x){return x.id===editingId;});
-    if(idx!==-1)products[idx]=Object.assign(products[idx],payload);
-    renderList();
+    if(editMode==='create'){
+      payload.sort_order=maxSort()+10;
+      var ins=await sb.from('products').insert(payload).select();
+      if(ins.error)throw ins.error;
+      toast('Товар добавлен');
+    }else{
+      var upd=await sb.from('products').update(payload).eq('id',editingId).select();
+      if(upd.error)throw upd.error;
+      toast('Сохранено');
+    }
+    await reloadProducts();
     closeEdit();
-    toast('Сохранено');
-  }catch(e){
-    toast('Не удалось сохранить. Попробуйте ещё раз.',true);
-  }finally{
-    btn.disabled=false;btn.textContent='Сохранить';
-  }
+  }catch(e){toast('Не удалось сохранить. Попробуйте ещё раз.',true);}
+  finally{btn.disabled=false;btn.textContent='Сохранить';}
+}
+
+// ══ УДАЛЕНИЕ ТОВАРА ══
+async function deleteProduct(){
+  if(editingId==null)return;
+  var p=products.find(function(x){return x.id===editingId;});
+  if(!p)return;
+  if(!window.confirm('Удалить товар «'+(p.name||'')+'»? Это действие необратимо.'))return;
+  var btn=$('DELETE_BTN');btn.disabled=true;btn.textContent='Удаление…';
+  try{
+    var res=await sb.from('products').delete().eq('id',editingId);
+    if(res.error)throw res.error;
+    imagesOf(p).forEach(removePhotoFromStorage); // подчистим фото из хранилища
+    await reloadProducts();
+    closeEdit();
+    toast('Товар удалён');
+  }catch(e){toast('Не удалось удалить. Попробуйте ещё раз.',true);}
+  finally{btn.disabled=false;btn.textContent='Удалить';}
 }
 
 // ══ СОБЫТИЯ ══
@@ -383,25 +442,24 @@ $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin(
 $('LOGOUT_BTN').addEventListener('click',handleLogout);
 $('SEARCH').addEventListener('input',renderList);
 $('CATFILTER').addEventListener('change',renderList);
-// делегирование на списке товаров
-$('LIST').addEventListener('click',function(e){
-  var b=e.target.closest('[data-id]');
-  if(b)openEdit(parseInt(b.getAttribute('data-id'),10));
+$('ADD_BTN').addEventListener('click',openCreate);
+$('LIST').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)openEdit(parseInt(b.getAttribute('data-id'),10));});
+$('F_PHOTOS').addEventListener('click',function(e){
+  var del=e.target.closest('[data-del]'); if(del){removePhoto(parseInt(del.getAttribute('data-del'),10));return;}
+  var star=e.target.closest('[data-star]'); if(star){makeCover(parseInt(star.getAttribute('data-star'),10));return;}
 });
+$('UPLOAD_BTN').addEventListener('click',function(){$('F_FILE').click();});
+$('F_FILE').addEventListener('change',function(e){handleFiles(e.target.files);});
 $('EDIT_X').addEventListener('click',closeEdit);
 $('EDIT_CANCEL').addEventListener('click',closeEdit);
 $('EDIT_SAVE').addEventListener('click',saveEdit);
+$('DELETE_BTN').addEventListener('click',deleteProduct);
 $('EDIT').addEventListener('click',function(e){if(e.target===this)closeEdit();});
 
-// ══ СТАРТ: сессия ══
+// ══ СТАРТ ══
 if(sb){
-  sb.auth.onAuthStateChange(function(event,session){
-    if(session&&session.user)showApp();else showLogin();
-  });
-  // первичная проверка (на случай, если событие не сработает мгновенно)
-  sb.auth.getSession().then(function(res){
-    if(res.data&&res.data.session)showApp();else showLogin();
-  });
+  sb.auth.onAuthStateChange(function(event,session){if(session&&session.user)showApp();else showLogin();});
+  sb.auth.getSession().then(function(res){if(res.data&&res.data.session)showApp();else showLogin();});
 }
 </script>
 </body>
