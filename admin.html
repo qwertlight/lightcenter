@@ -7,6 +7,7 @@
 <title>LightCenter · Панель управления</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -129,6 +130,18 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .cat-count{font-size:12px;color:var(--light);white-space:nowrap}
 .cat-del{width:34px;height:34px;min-width:34px;border:1px solid #F1D5D1;background:var(--danger-bg);color:var(--danger);border-radius:8px;font-size:14px;display:flex;align-items:center;justify-content:center}
 
+.imp-sum{font-size:14px;margin-bottom:12px;line-height:1.6}
+.imp-ok{color:var(--ok);font-weight:600}
+.imp-bad{color:var(--danger);font-weight:600}
+.imp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.imp-table{width:100%;border-collapse:collapse;font-size:13px;min-width:420px}
+.imp-table th,.imp-table td{border:1px solid var(--border);padding:6px 8px;text-align:left;vertical-align:top}
+.imp-table th{background:var(--soft);font-weight:600;position:sticky;top:0}
+.imp-errs{margin-top:12px;background:var(--danger-bg);border:1px solid #F1D5D1;border-radius:10px;padding:10px 12px;font-size:13px;color:var(--danger)}
+.imp-errs b{display:block;margin-bottom:4px}
+.imp-errs div{margin:2px 0}
+.imp-hint{font-size:12px;color:var(--light);margin-top:8px}
+
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:80;opacity:0;transition:transform .25s,opacity .25s;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast.err{background:var(--danger)}
@@ -162,8 +175,10 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     <div class="toolbar">
       <input type="search" id="SEARCH" placeholder="Поиск по названию…">
       <select id="CATFILTER"><option value="all">Все категории</option></select>
+      <button class="btn-ghost" id="IMPORT_BTN">Импорт Excel</button>
       <button class="btn-add" id="ADD_BTN">+ Товар</button>
     </div>
+    <input type="file" id="XLS_FILE" accept=".xlsx" class="hidden">
     <div class="list" id="LIST"></div>
   </div>
 </div>
@@ -229,6 +244,26 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     </div>
     <div class="sheet-foot">
       <button class="btn-ghost" id="CAT_CLOSE" style="flex:1">Готово</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT SHEET -->
+<div class="overlay" id="IMPORTMODAL">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Импорт из Excel</h2>
+      <button class="x" id="IMP_X" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="imp-sum" id="IMP_SUM"></div>
+      <div class="imp-wrap"><table class="imp-table" id="IMP_TABLE"></table></div>
+      <div class="imp-errs hidden" id="IMP_ERRS"></div>
+      <div class="imp-hint" id="IMP_HINT"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" id="IMP_CANCEL">Отмена</button>
+      <button class="btn btn-primary" id="IMP_DO">Импортировать</button>
     </div>
   </div>
 </div>
@@ -544,6 +579,104 @@ async function moveCategory(i,dir){
   }catch(e){toast('Не удалось изменить порядок',true);await loadCategories();renderCatManager();}
 }
 
+// ══ ИМПОРТ EXCEL ══
+var importRows = [];
+function labelToSlugMap(){ var m={}; cats.forEach(function(c){ m[String(c.label).toLowerCase().trim()]=c.slug; }); return m; }
+function badgeToCode(v){ v=String(v||'').toLowerCase(); if(v.indexOf('новин')!==-1)return 'new'; if(v.indexOf('акци')!==-1)return 'sale'; if(v.indexOf('хит')!==-1)return 'hit'; return ''; }
+function colIndexes(hdr){
+  var idx={};
+  for(var i=0;i<hdr.length;i++){
+    var t=String(hdr[i]||'').toLowerCase();
+    if(t.indexOf('назван')!==-1&&idx.name===undefined)idx.name=i;
+    else if(t.indexOf('цена')!==-1&&idx.price===undefined)idx.price=i;
+    else if(t.indexOf('категор')!==-1&&idx.cat===undefined)idx.cat=i;
+    else if(t.indexOf('единиц')!==-1&&idx.unit===undefined)idx.unit=i;
+    else if(t.indexOf('описан')!==-1&&idx.desc===undefined)idx.desc=i;
+    else if(t.indexOf('метк')!==-1&&idx.badge===undefined)idx.badge=i;
+    else if(t.indexOf('фото')!==-1&&idx.images===undefined)idx.images=i;
+  }
+  return idx;
+}
+async function handleXls(file){
+  if(!file)return;
+  if(typeof XLSX==='undefined'){ toast('Компонент чтения Excel не загрузился. Обновите страницу.',true); return; }
+  try{
+    var buf=await file.arrayBuffer();
+    var wb=XLSX.read(buf,{type:'array'});
+    var sn=wb.SheetNames.indexOf('Товары')!==-1?'Товары':wb.SheetNames[0];
+    var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+    parseRows(rows);
+  }catch(e){ toast('Не удалось прочитать файл',true); }
+  $('XLS_FILE').value='';
+}
+function parseRows(rows){
+  if(!rows||rows.length<2){ toast('В файле нет строк с товарами',true); return; }
+  var idx=colIndexes(rows[0]);
+  if(idx.name===undefined||idx.price===undefined||idx.cat===undefined){
+    toast('Не найдены колонки Название / Цена / Категория',true); return;
+  }
+  var l2s=labelToSlugMap();
+  var valid=[], errors=[], base=maxSort();
+  for(var r=1;r<rows.length;r++){
+    var row=rows[r]||[];
+    var name=String(row[idx.name]!=null?row[idx.name]:'').trim();
+    var priceRaw=String(row[idx.price]!=null?row[idx.price]:'').trim();
+    var clabel=String(row[idx.cat]!=null?row[idx.cat]:'').trim();
+    if(!name && !priceRaw && !clabel) continue; // пустая строка
+    var prob=[];
+    if(name.length<2)prob.push('нет названия');
+    var price=parseInt(priceRaw.replace(/[^\d]/g,''),10);
+    if(isNaN(price)||price<0)prob.push('цена');
+    var slug=l2s[clabel.toLowerCase()];
+    if(!slug)prob.push('категория «'+clabel+'»');
+    if(prob.length){ errors.push({row:r+1,name:name||'(без названия)',why:prob.join(', ')}); continue; }
+    var unit=(idx.unit!==undefined?String(row[idx.unit]||'').trim():'')||'шт';
+    var desc=idx.desc!==undefined?String(row[idx.desc]||'').trim():'';
+    var badge=idx.badge!==undefined?badgeToCode(row[idx.badge]):'';
+    var imgs=[];
+    if(idx.images!==undefined)imgs=String(row[idx.images]||'').split(',').map(function(s){return s.trim();}).filter(function(s){return /^https?:\/\//i.test(s);});
+    valid.push({name:name,price:price,cat:slug,unit:unit,badge:badge,description:desc,active:true,images:imgs,img:imgs[0]||'',sort_order:base+(valid.length+1)*10});
+  }
+  importRows=valid;
+  showImportPreview(valid,errors);
+}
+function showImportPreview(valid,errors){
+  $('IMP_SUM').innerHTML='Готово к импорту: <span class="imp-ok">'+valid.length+'</span>'
+    +(errors.length?(' · с ошибками (пропущены): <span class="imp-bad">'+errors.length+'</span>'):'');
+  var t=$('IMP_TABLE');
+  if(valid.length){
+    var h='<tr><th>Название</th><th>Цена</th><th>Категория</th><th>Фото</th></tr>';
+    var lim=Math.min(valid.length,80);
+    for(var i=0;i<lim;i++){var p=valid[i];h+='<tr><td>'+esc(p.name)+'</td><td>'+fmtPrice(p.price)+'</td><td>'+esc(catLabel[p.cat]||p.cat)+'</td><td>'+(p.images.length||'—')+'</td></tr>';}
+    t.innerHTML=h;
+    $('IMP_HINT').textContent=valid.length>80?('Показаны первые 80 из '+valid.length+'. Импортируются все.'):'';
+  }else{ t.innerHTML=''; $('IMP_HINT').textContent=''; }
+  var e=$('IMP_ERRS');
+  if(errors.length){
+    var eh='<b>Строки с ошибками — не будут импортированы:</b>';
+    var elim=Math.min(errors.length,40);
+    for(var j=0;j<elim;j++)eh+='<div>Строка '+errors[j].row+': '+esc(errors[j].name)+' — '+esc(errors[j].why)+'</div>';
+    if(errors.length>40)eh+='<div>…и ещё '+(errors.length-40)+'</div>';
+    e.innerHTML=eh; e.classList.remove('hidden');
+  }else e.classList.add('hidden');
+  $('IMP_DO').disabled=!valid.length;
+  $('IMP_DO').textContent=valid.length?('Импортировать '+valid.length):'Импортировать';
+  $('IMPORTMODAL').classList.add('open'); lockScroll(true);
+}
+function closeImport(){ $('IMPORTMODAL').classList.remove('open'); lockScroll(false); }
+async function doImport(){
+  if(!importRows.length)return;
+  var btn=$('IMP_DO');btn.disabled=true;btn.textContent='Импорт…';
+  try{
+    var res=await sb.from('products').insert(importRows).select();
+    if(res.error)throw res.error;
+    await reloadProducts();
+    closeImport();
+    toast('Импортировано: '+importRows.length);
+    importRows=[];
+  }catch(e){ toast('Ошибка импорта. Проверьте данные и попробуйте снова.',true); btn.disabled=false; btn.textContent='Импортировать'; }
+}
+
 // ══ СОБЫТИЯ ══
 $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
@@ -563,6 +696,14 @@ $('EDIT_CANCEL').addEventListener('click',closeEdit);
 $('EDIT_SAVE').addEventListener('click',saveEdit);
 $('DELETE_BTN').addEventListener('click',deleteProduct);
 $('EDIT').addEventListener('click',function(e){if(e.target===this)closeEdit();});
+
+// импорт Excel
+$('IMPORT_BTN').addEventListener('click',function(){$('XLS_FILE').click();});
+$('XLS_FILE').addEventListener('change',function(e){handleXls(e.target.files[0]);});
+$('IMP_X').addEventListener('click',closeImport);
+$('IMP_CANCEL').addEventListener('click',closeImport);
+$('IMP_DO').addEventListener('click',doImport);
+$('IMPORTMODAL').addEventListener('click',function(e){if(e.target===this)closeImport();});
 
 // категории
 $('CATS_BTN').addEventListener('click',openCatManager);
