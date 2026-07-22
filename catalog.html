@@ -382,22 +382,7 @@ footer{background:var(--dark)}
 
 <!-- FILTERS -->
 <div class="filters">
-  <div class="filter-inner">
-    <button class="fbtn active" onclick="filterBtn(this,'all')">Все</button>
-    <button class="fbtn" onclick="filterBtn(this,'treki')">Треки</button>
-    <button class="fbtn" onclick="filterBtn(this,'treki_48v')">48V</button>
-    <button class="fbtn" onclick="filterBtn(this,'treki_220v')">220V</button>
-    <button class="fbtn" onclick="filterBtn(this,'ulichnye')">Уличные</button>
-    <button class="fbtn" onclick="filterBtn(this,'fasad')">Фасадные</button>
-    <button class="fbtn" onclick="filterBtn(this,'sadovo_park')">Садово-парковые</button>
-    <button class="fbtn" onclick="filterBtn(this,'spoty')">Споты</button>
-    <button class="fbtn" onclick="filterBtn(this,'ofisnye')">Промышленные</button>
-    <button class="fbtn" onclick="filterBtn(this,'lenty')">LED ленты</button>
-    <button class="fbtn" onclick="filterBtn(this,'bloki_pitaniya')">Блоки питания</button>
-    <button class="fbtn" onclick="filterBtn(this,'profili')">Профили</button>
-    <button class="fbtn" onclick="filterBtn(this,'lampy')">Лампы</button>
-    <button class="fbtn" onclick="filterBtn(this,'datchiki')">Датчики</button>
-  </div>
+  <div class="filter-inner" id="FBAR"></div>
 </div>
 
 <!-- PRODUCTS -->
@@ -603,7 +588,22 @@ function render(cat) {
 }
 
 function searchProducts() { curSearch = document.getElementById('SQ').value; render(curCat); }
-function filterBtn(btn, cat) { document.querySelectorAll('.fbtn').forEach(function(b) { b.classList.remove('active') }); btn.classList.add('active'); render(cat); }
+
+// ── Динамические фильтры категорий (из базы, с fallback на CAT_LIST) ──
+function renderFilters() {
+  var bar = document.getElementById('FBAR');
+  if (!bar) return;
+  var h = '<button class="fbtn' + (curCat === 'all' ? ' active' : '') + '" data-cat="all">Все</button>';
+  for (var i = 0; i < CAT_LIST.length; i++) {
+    h += '<button class="fbtn' + (curCat === CAT_LIST[i].slug ? ' active' : '') + '" data-cat="' + escHtml(CAT_LIST[i].slug) + '">' + escHtml(CAT_LIST[i].label) + '</button>';
+  }
+  bar.innerHTML = h;
+}
+function setFilter(cat) { curCat = cat; renderFilters(); render(cat); }
+document.getElementById('FBAR').addEventListener('click', function(e) {
+  var b = e.target.closest('[data-cat]');
+  if (b) setFilter(b.getAttribute('data-cat'));
+});
 
 // ── CART ──
 function addCart(gi, qty) {
@@ -934,25 +934,24 @@ window.addEventListener('load', function() {
   var params = new URLSearchParams(window.location.search);
   var cat = params.get('cat');
   var search = params.get('search');
-  if (cat) {
-    curCat = cat;
-    document.querySelectorAll('.fbtn').forEach(function(b) {
-      b.classList.remove('active');
-      if (b.getAttribute('onclick') && b.getAttribute('onclick').indexOf("'" + cat + "'") !== -1) b.classList.add('active');
-    });
-  }
+  if (cat) curCat = cat;
   if (search) {
     curSearch = search;
     document.getElementById('SQ').value = search;
   }
+  renderFilters();
   render(curCat);
   renderRecent();
 });
 
-// Перерисовка, когда из базы пришёл свежий каталог (Вариант 1: прямое чтение из Supabase)
+// Перерисовка, когда из базы пришёл свежий каталог
 document.addEventListener('lc:products-loaded', function() {
   render(curCat);
   renderRecent();
+});
+// Перестройка фильтров, когда из базы пришли категории
+document.addEventListener('lc:categories-loaded', function() {
+  renderFilters();
 });
 </script>
 </body>
