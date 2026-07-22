@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightCenter.kz — Комплексное освещение для любых проектов</title>
+<meta name="description" content="Интерьерное, уличное и архитектурное освещение в Алматы. Магнитные треки 48V, LED-ленты, споты, блоки питания. Гарантия 2–5 лет. Доставка по Казахстану.">
+<link rel="icon" href="img/favicon.ico" type="image/x-icon">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LightCenter — Магазин освещения в Алматы">
+<meta property="og:description" content="Оптовые и розничные поставки светооборудования. Более 290 позиций на складе.">
+<meta property="og:image" content="https://lightcenter.kz/img/og-main.jpg">
+<meta property="og:url" content="https://lightcenter.kz/">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://lightcenter.kz/">
+<!-- ANALYTICS -->
+<script>
+(function(){
+  /* ─── Заполни реальными ID из своих кабинетов, иначе трекинг не включится ─── */
+  var YM_ID = 0;                 /* Яндекс.Метрика: номер счётчика (число) */
+  var GA_ID = 'G-XXXXXXXXXX';    /* GA4 Measurement ID */
+  var AW_ID = 'AW-XXXXXXXXXX';   /* Google Ads: тег конверсий */
+  var FB_ID = 'XXXXXXXXXXXXXXX'; /* Meta Pixel ID */
+  var ok = function(v){ return v && String(v).indexOf('X') === -1; };
+
+  if (ok(YM_ID)) { try {
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r)return;}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+    ym(YM_ID,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+    window.LC_YM_ID = YM_ID;
+  } catch(e){} }
+
+  if (ok(GA_ID)) { try {
+    var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};
+    gtag('js',new Date());gtag('config',GA_ID);
+    if (ok(AW_ID)) gtag('config',AW_ID);
+  } catch(e){} }
+
+  if (ok(FB_ID)) { try {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init',FB_ID);fbq('track','PageView');
+  } catch(e){} }
+})();
+</script>
+<!-- /ANALYTICS -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAFAF7;--white:#fff;
+  --gold:#C9943A;--gold-l:#F5E6CC;--gold-p:#FDF7EE;--gold-d:#A87A2F;
+  --dark:#1C1C1A;--mid:#5A5A55;--light:#9A9A94;
+  --border:#E8E8E2;--soft:#F0F0EA;
+  --fd:'Cormorant',Georgia,serif;
+  --fb:'Outfit',system-ui,sans-serif;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.06);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);background:var(--cream);color:var(--dark);font-size:15px;line-height:1.6}
+
+/* TOP BAR */
+.top-bar{background:var(--dark);color:var(--gold-p);font-size:12px;text-align:center;padding:6px 16px;font-weight:500;font-family:var(--fb)}
+
+/* COOKIE */
+.cookie-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);color:rgba(255,255,255,.75);padding:14px 24px;display:flex;align-items:center;justify-content:center;gap:16px;z-index:999;font-size:13px;transform:translateY(100%);transition:transform .4s ease;font-family:var(--fb)}
+.cookie-bar.show{transform:translateY(0)}
+.cookie-bar button{background:var(--gold);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0}
+.cookie-bar button:hover{background:var(--gold-d)}
+.wrapper{overflow-x:hidden;position:relative}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* SAFE AREA */
+footer{padding-bottom:env(safe-area-inset-bottom,0)}
+.floats{bottom:calc(24px + env(safe-area-inset-bottom,0))}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(201,148,58,.15)}50%{box-shadow:0 0 40px rgba(201,148,58,.3)}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ═══ NAV ═══ */
+.nav{position:sticky;top:0;z-index:100;background:rgba(250,250,247,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-top{display:flex;align-items:center;gap:16px;max-width:1320px;margin:0 auto;padding:0 28px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo-svg{flex-shrink:0}
+.burger{display:none;flex-direction:column;justify-content:space-between;width:26px;height:20px;background:none;border:none;cursor:pointer;padding:0;margin-left:auto}
+.burger span{display:block;height:2.5px;background:var(--dark);border-radius:2px;transition:all .3s}
+
+/* MOBILE MENU */
+.mob-overlay{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s}
+.mob-overlay.open{opacity:1;pointer-events:all}
+.mob-menu{position:fixed;top:0;right:0;bottom:0;z-index:151;width:280px;max-width:85vw;background:var(--white);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:0;display:flex;flex-direction:column}
+.mob-overlay.open .mob-menu{transform:translateX(0)}
+.mob-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mob-head svg{flex-shrink:0}
+.mob-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.mob-links{flex:1;overflow-y:auto;padding:8px 0}
+.mob-link{display:block;padding:14px 24px;font-size:15px;font-weight:500;color:var(--dark);border-bottom:1px solid var(--soft);transition:all .15s}
+.mob-link:hover,.mob-link.active{color:var(--gold);background:var(--gold-p)}
+.mob-phone{margin:16px 20px;padding:14px;border-radius:12px;background:var(--dark);color:#fff;text-align:center;font-size:14px;font-weight:500}
+.mob-wa{margin:0 20px 20px;padding:14px;border-radius:12px;background:#25D366;color:#fff;text-align:center;font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* CARD ANIMATIONS */
+.pcard{opacity:0;transform:translateY(20px);animation:cardIn .5s ease forwards}
+
+/* NAV SEARCH */
+.nav-search-wrap{position:relative;display:flex;align-items:center}
+.nav-search-btn{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;transition:all .15s;flex-shrink:0}
+.nav-search-btn:hover{border-color:var(--gold);color:var(--gold)}
+.nav-search-input{width:0;opacity:0;padding:0;border:none;font-family:var(--fb);font-size:14px;outline:none;background:transparent;transition:all .3s ease}
+.nav-search-wrap.open .nav-search-input{width:200px;opacity:1;padding:9px 14px;border:1px solid var(--border);border-radius:10px;margin-right:8px;background:var(--white)}
+.nav-search-wrap.open .nav-search-input:focus{border-color:var(--gold)}
+
+/* FAIL-SAFE REVEAL */
+@keyframes revealFallback{to{opacity:1;transform:translateY(0)}}
+.reveal{animation:revealFallback .6s ease 1.8s forwards}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+.pcard:nth-child(1){animation-delay:.05s}
+.pcard:nth-child(2){animation-delay:.1s}
+.pcard:nth-child(3){animation-delay:.15s}
+.pcard:nth-child(4){animation-delay:.2s}
+.pcard:nth-child(5){animation-delay:.25s}
+.pcard:nth-child(6){animation-delay:.3s}
+.pcard:nth-child(7){animation-delay:.35s}
+.pcard:nth-child(8){animation-delay:.4s}
+.ccard{opacity:0;transform:translateY(16px);animation:cardIn .4s ease forwards}
+.ccard:nth-child(1){animation-delay:.03s}.ccard:nth-child(2){animation-delay:.06s}
+.ccard:nth-child(3){animation-delay:.09s}.ccard:nth-child(4){animation-delay:.12s}
+.ccard:nth-child(5){animation-delay:.15s}.ccard:nth-child(6){animation-delay:.18s}
+.ccard:nth-child(7){animation-delay:.21s}.ccard:nth-child(8){animation-delay:.24s}
+.ccard:nth-child(9){animation-delay:.27s}.ccard:nth-child(10){animation-delay:.3s}
+.ccard:nth-child(11){animation-delay:.33s}.ccard:nth-child(12){animation-delay:.36s}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-name{font-family:var(--fb);font-weight:700;font-size:15px;color:var(--dark);letter-spacing:2.5px;text-transform:uppercase}
+.logo-sub{font-size:9.5px;color:var(--light);letter-spacing:1.8px;margin-top:2px;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:6px;margin-left:32px}
+.nav-link{padding:8px 14px;font-size:13px;font-weight:500;color:var(--mid);border-radius:8px;transition:all .15s;white-space:nowrap}
+.nav-link:hover,.nav-link.active{color:var(--dark);background:var(--soft)}
+.nav-link.active{color:var(--gold)}
+.nav-spacer{flex:1}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.nbtn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;border:1px solid var(--border);background:var(--white);font-family:var(--fb);font-size:13px;font-weight:500;color:var(--dark);cursor:pointer;transition:all .15s;white-space:nowrap}
+.nbtn:hover{border-color:var(--gold);color:var(--gold)}
+.nbtn svg{width:16px;height:16px}
+.nav-phone{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;background:var(--dark);color:#fff;font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.nav-phone:hover{background:#333}
+
+/* ═══ HERO ═══ */
+.hero{background:var(--white);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,148,58,.06) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1320px;margin:0 auto;padding:0 28px;display:grid;grid-template-columns:1fr 1fr;min-height:520px;align-items:center;gap:40px}
+.hero-content{padding:64px 0;animation:slideRight .8s ease}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gold-p);border:1px solid var(--gold-l);color:var(--gold);font-size:12px;font-weight:500;padding:6px 14px;border-radius:24px;margin-bottom:24px}
+.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+h1{font-family:var(--fd);font-size:56px;font-weight:400;line-height:1.05;margin-bottom:18px;letter-spacing:-.5px}
+h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:15px;color:var(--mid);line-height:1.75;margin-bottom:32px;max-width:440px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:var(--dark);color:#fff;padding:14px 28px;border-radius:12px;font-family:var(--fb);font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .2s}
+.btn-p:hover{background:#333;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.btn-o{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--dark);padding:14px 28px;border-radius:12px;border:1px solid var(--border);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-o:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
+.btn-g{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#fff;padding:14px 28px;border-radius:12px;font-family:var(--fb);font-size:14px;font-weight:500;border:none;cursor:pointer;transition:all .2s}
+.btn-g:hover{background:var(--gold-d);transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,148,58,.3)}
+.hero-stats{display:flex;gap:36px;margin-top:44px;padding-top:28px;border-top:1px solid var(--soft)}
+.hstat .num{font-family:var(--fd);font-size:30px;font-weight:600;line-height:1;color:var(--dark)}
+.hstat .lbl{font-size:12px;color:var(--light);margin-top:4px}
+.hero-vis{padding:40px 20px;display:flex;align-items:center;justify-content:center;animation:fadeIn 1s ease .3s both}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:460px}
+.hcard{border-radius:18px;aspect-ratio:1;position:relative;cursor:pointer;transition:all .3s;overflow:hidden;border:1px solid var(--border)}
+.hcard:hover{transform:scale(1.03);box-shadow:var(--shadow)}
+.hcard:nth-child(1){background:linear-gradient(135deg,#e8eef8,#d0ddf0)}
+.hcard:nth-child(2){background:linear-gradient(135deg,#fdf3e7,#fae8cc);margin-top:28px}
+.hcard:nth-child(3){background:linear-gradient(135deg,#fff8e0,#fcecc0);margin-top:-28px}
+.hcard:nth-child(4){background:linear-gradient(135deg,#eef8f0,#d0e8d8)}
+.hcard-lbl{position:absolute;bottom:14px;left:14px;right:14px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-radius:10px;padding:10px 12px;font-size:12px;font-weight:500}
+.hcard-price{font-size:12px;color:var(--gold);font-weight:600;margin-top:3px}
+.hcard-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:48px;opacity:.7}
+
+/* ═══ SECTIONS ═══ */
+.sec{padding:72px 28px;max-width:1320px;margin:0 auto}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+.sec-title{font-family:var(--fd);font-size:38px;font-weight:400;color:var(--dark)}
+.sec-sub{font-size:14px;color:var(--light);margin-top:4px}
+.sec-link{font-size:13px;font-weight:500;color:var(--gold);display:flex;align-items:center;gap:4px;transition:gap .2s}
+.sec-link:hover{gap:8px}
+
+/* ═══ CATEGORIES ═══ */
+.cats-wrap{background:var(--cream);border-bottom:1px solid var(--border)}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px 18px;cursor:pointer;transition:all .25s;display:block;position:relative;overflow:hidden}
+.ccard::after{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .25s;background:linear-gradient(135deg,var(--gold-p),transparent)}
+.ccard:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 28px rgba(201,148,58,.1)}
+.ccard:hover::after{opacity:1}
+.ccard>*{position:relative;z-index:1}
+.cicon{width:48px;height:48px;border-radius:13px;background:var(--gold-p);border:1px solid var(--gold-l);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px;transition:transform .3s}
+.ccard:hover .cicon{transform:scale(1.08)}
+.cname{font-size:14px;font-weight:500;line-height:1.4;margin-bottom:4px}
+.ccnt{font-size:12px;color:var(--light)}
+
+/* ═══ FEATURED PRODUCTS ═══ */
+.prods-wrap{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.pcard{border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--white);transition:all .25s;position:relative}
+.pcard:hover{border-color:var(--gold);box-shadow:0 8px 28px rgba(0,0,0,.07);transform:translateY(-2px)}
+.pimg{aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--soft)}
+.pimg img{width:100%;height:100%;object-fit:cover}
+.pbadge{position:absolute;top:10px;left:10px;padding:5px 10px;border-radius:8px;font-size:11px;font-weight:600;z-index:2}
+.bnew{background:var(--dark);color:#fff}.bsale{background:#E25D3A;color:#fff}.bhit{background:var(--gold);color:#fff}
+.pcard:hover .pquick{opacity:1;transform:translateY(0)}
+.pquick{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(28,28,26,.85));padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transform:translateY(8px);transition:all .3s}
+.qkbtn{padding:8px 14px;border-radius:8px;background:var(--white);color:var(--dark);font-family:var(--fb);font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all .15s}
+.qkbtn:hover{background:var(--gold-p)}
+.qkbtn.g{background:var(--gold);color:#fff}
+.qkbtn.g:hover{background:var(--gold-d)}
+.pbody{padding:14px 16px}
+.pbrand{font-size:11px;color:var(--light);font-weight:500;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.pname{font-size:13px;font-weight:500;line-height:1.4;margin-bottom:10px;min-height:36px}
+.pprice{font-family:var(--fd);font-size:20px;font-weight:600}
+.pprice small{font-family:var(--fb);font-size:11px;color:var(--light);font-weight:400}
+.pwa{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:8px;background:#25D366;color:#fff;font-size:11px;font-weight:600;border:none;cursor:pointer;transition:all .15s}
+.pwa:hover{background:#1fb855;transform:scale(1.03)}
+.pfooter{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+
+/* ═══ WHY ═══ */
+.why{background:var(--cream);border-top:1px solid var(--border)}
+.wgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.wcard{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px 22px;transition:all .25s}
+.wcard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.wnum{font-family:var(--fd);font-size:40px;font-weight:600;color:var(--gold-l);line-height:1;margin-bottom:12px}
+.wtitle{font-size:15px;font-weight:500;margin-bottom:8px}
+.wtext{font-size:13px;color:var(--light);line-height:1.7}
+
+/* ═══ B2B ═══ */
+.b2b{background:var(--dark);position:relative;overflow:hidden}
+.b2b::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,148,58,.08) 0%,transparent 70%)}
+.b2b-inner{max-width:1320px;margin:0 auto;padding:80px 28px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.b2b-title{font-family:var(--fd);font-size:44px;font-weight:400;color:#fff;line-height:1.1;margin-bottom:16px}
+.b2b-title em{color:var(--gold);font-style:italic}
+.b2b-sub{color:rgba(255,255,255,.45);font-size:15px;line-height:1.75;margin-bottom:28px}
+.b2b-feats{display:flex;flex-direction:column;gap:14px;margin-bottom:32px}
+.b2b-feat{display:flex;align-items:flex-start;gap:14px}
+.b2b-fi{width:34px;height:34px;border-radius:9px;background:rgba(201,148,58,.15);border:1px solid rgba(201,148,58,.25);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px}
+.b2b-ft strong{display:block;color:#fff;font-size:14px;font-weight:500;margin-bottom:2px}
+.b2b-ft span{color:rgba(255,255,255,.35);font-size:12px;line-height:1.5}
+.b2b-form{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px}
+.b2b-ft2{color:#fff;font-size:17px;font-weight:500;margin-bottom:20px}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:11px;color:rgba(255,255,255,.4);margin-bottom:5px;font-weight:500}
+.fg input,.fg select{width:100%;padding:11px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+.fg input::placeholder{color:rgba(255,255,255,.2)}
+.fg input:focus,.fg select:focus{border-color:var(--gold)}
+.fg select option{background:#2a2a28}
+
+/* ═══ PARTNERS ═══ */
+.partners{background:var(--white);border-top:1px solid var(--border)}
+.partner-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;align-items:center}
+.partner-item{padding:18px 32px;border:1px solid var(--border);border-radius:12px;font-family:var(--fb);font-size:15px;font-weight:600;color:var(--dark);letter-spacing:1px;opacity:.4;transition:all .3s;cursor:default;white-space:nowrap}
+.partner-item:hover{opacity:1;border-color:var(--gold);transform:translateY(-2px)}
+
+/* ═══ BRANDS / CONTACTS TICKER ═══ */
+.ticker{background:var(--white);border-top:1px solid var(--border);padding:36px 0;overflow:hidden}
+.ticker-lbl{text-align:center;font-size:11px;color:var(--light);text-transform:uppercase;letter-spacing:1.5px;font-weight:500;margin-bottom:20px}
+.ticker-track{display:flex;animation:scroll 30s linear infinite;width:max-content}
+.ticker-track:hover{animation-play-state:paused}
+.tpill{padding:9px 24px;margin:0 6px;border:1px solid var(--border);border-radius:40px;font-size:13px;font-weight:500;color:var(--mid);white-space:nowrap;transition:all .2s}
+.tpill:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--dark)}
+.ftop{max-width:1320px;margin:0 auto;padding:56px 28px 36px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;border-bottom:1px solid rgba(255,255,255,.06)}
+.fln{font-family:var(--fb);font-weight:700;font-size:14px;color:#fff;letter-spacing:2.5px;text-transform:uppercase}
+.fle{font-size:10px;color:rgba(255,255,255,.25);letter-spacing:1.5px;display:block;margin-top:3px;margin-bottom:14px}
+.fdesc{font-size:13px;color:rgba(255,255,255,.35);line-height:1.75;margin-bottom:20px}
+.fcon a{display:block;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:6px;transition:color .15s}
+.fcon a:hover{color:var(--gold)}
+.fct{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.flink{display:block;font-size:13px;color:rgba(255,255,255,.45);margin-bottom:9px;transition:color .15s}
+.flink:hover{color:#fff}
+.fbot{max-width:1320px;margin:0 auto;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fcopy{font-size:12px;color:rgba(255,255,255,.18)}
+.fleg{display:flex;gap:20px}
+.fleg a{font-size:12px;color:rgba(255,255,255,.18);transition:color .15s}
+.fleg a:hover{color:rgba(255,255,255,.5)}
+
+/* ═══ FLOATING BUTTONS ═══ */
+.floats{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:90}
+.float-btn{width:52px;height:52px;border-radius:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.float-btn:hover{transform:scale(1.08)}
+.fwa{background:#25D366;color:#fff}
+.fwa:hover{box-shadow:0 4px 20px rgba(37,211,102,.4)}
+.ftg{background:#229ED9;color:#fff}
+.ftop-btn{background:var(--white);color:var(--dark);border:1px solid var(--border);opacity:0;pointer-events:none;transition:all .3s}
+.ftop-btn.show{opacity:1;pointer-events:all}
+.ftip{position:absolute;right:62px;background:var(--dark);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;font-family:var(--fb)}
+.float-btn:hover .ftip{opacity:1}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2);font-family:var(--fb)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;min-height:auto}
+  .hero-vis{display:none}
+  h1{font-size:42px}
+  .prod-grid{grid-template-columns:repeat(3,1fr)}
+  .wgrid{grid-template-columns:repeat(2,1fr)}
+  .b2b-inner{grid-template-columns:1fr}
+  .ftop{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .burger{display:flex}
+}
+@media(max-width:768px){
+  .nav-top{height:60px;padding:0 16px}
+  .nav-phone{display:none}
+  .sec{padding:48px 16px}
+  h1{font-size:34px}
+  .hero-content{padding:40px 0}
+  .prod-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .wgrid{grid-template-columns:1fr}
+  .b2b-inner{padding:48px 16px}
+  .b2b-title{font-size:32px}
+  .ftop{grid-template-columns:1fr;padding:36px 16px}
+  .hero-stats{flex-wrap:wrap;gap:20px}
+}
+@media(max-width:480px){
+  .prod-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .pbody{padding:10px 12px}
+  .pname{font-size:12px;min-height:auto}
+  .pprice{font-size:17px}
+  .cat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<!-- TOP BAR -->
+<div class="top-bar">🔥 Специальные условия для дизайнеров и монтажников. Оптовые скидки до 35%</div>
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav" id="NAV">
+  <div class="nav-top">
+    <a href="index.html" class="logo">
+      <svg class="logo-svg" viewBox="0 0 40 48" width="36" height="43" fill="none"><line x1="20" y1="2" x2="20" y2="8" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="32" y1="7" x2="29" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="8" y1="7" x2="11" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="37" y1="16" x2="33" y2="18" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="3" y1="16" x2="7" y2="18" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="23" r="12" stroke="#1C1C1A" stroke-width="2"/><circle cx="20" cy="23" r="6.5" fill="#C9943A" opacity=".12"/><path d="M15 35Q15 40 16.5 42L23.5 42Q25 40 25 35" stroke="#1C1C1A" stroke-width="2" fill="none"/><line x1="16" y1="38" x2="24" y2="38" stroke="#C9943A" stroke-width="1.5" stroke-linecap="round"/><line x1="17" y1="41" x2="23" y2="41" stroke="#C9943A" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="logo-text">
+        <span class="logo-name">Light Center</span>
+        <span class="logo-sub">ESTD 2020 · Алматы</span>
+      </div>
+    </a>
+    <button class="burger" id="BURGER" onclick="openMobile()"><span></span><span></span><span></span></button>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active">Главная</a>
+      <a href="catalog.html" class="nav-link">Каталог</a>
+      <a href="about.html" class="nav-link">О нас</a>
+      <a href="portfolio.html" class="nav-link">Проекты</a>
+      <a href="delivery.html" class="nav-link">Доставка</a>
+      <a href="blog.html" class="nav-link">Блог</a>
+      <a href="contacts.html" class="nav-link">Контакты</a>
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-actions">
+      <div class="nav-search-wrap" id="NSW">
+        <input type="text" class="nav-search-input" id="NSI" placeholder="Поиск товаров..." onkeydown="if(event.key==='Enter')navSearch()">
+        <button class="nav-search-btn" onclick="toggleNavSearch()">🔍</button>
+      </div>
+      <a href="catalog.html" class="nbtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Каталог
+      </a>
+      <a href="tel:+77760007232" class="nav-phone">📞 +7 776 000 72 32</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MOBILE MENU ═══ -->
+<div class="mob-overlay" id="MOB" onclick="if(event.target===this)closeMobile()">
+  <div class="mob-menu">
+    <div class="mob-head">
+      <svg viewBox="0 0 40 48" width="30" height="36" fill="none"><line x1="20" y1="2" x2="20" y2="8" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="32" y1="7" x2="29" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="8" y1="7" x2="11" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="23" r="12" stroke="#1C1C1A" stroke-width="2"/><circle cx="20" cy="23" r="6.5" fill="#C9943A" opacity=".12"/><path d="M15 35Q15 40 16.5 42L23.5 42Q25 40 25 35" stroke="#1C1C1A" stroke-width="2" fill="none"/><line x1="16" y1="38" x2="24" y2="38" stroke="#C9943A" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <button class="mob-close" onclick="closeMobile()">✕</button>
+    </div>
+    <div class="mob-links">
+      <a href="index.html" class="mob-link active">Главная</a>
+      <a href="catalog.html" class="mob-link">Каталог</a>
+      <a href="about.html" class="mob-link">О компании</a>
+      <a href="portfolio.html" class="mob-link">Проекты</a>
+      <a href="delivery.html" class="mob-link">Доставка и оплата</a>
+      <a href="blog.html" class="mob-link">Блог</a>
+      <a href="faq.html" class="mob-link">FAQ</a>
+      <a href="contacts.html" class="mob-link">Контакты</a>
+    </div>
+    <a href="tel:+77760007232" class="mob-phone">📞 +7 (776) 000-72-32</a>
+    <a href="https://wa.me/77760007232" class="mob-wa" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.528 5.854L0 24l6.293-1.497A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+      Написать в WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">Официальный склад в Алматы · 298 позиций</div>
+      <h1>Комплексное<br>освещение <em>для любых<br>проектов</em></h1>
+      <p class="hero-sub">Интерьерное, уличное и архитектурное освещение, магнитные трековые системы 48V, LED-ленты и электроустановочные изделия. Гарантия 2–5 лет.</p>
+      <div class="hero-actions">
+        <a href="catalog.html" class="btn-p">Перейти в каталог →</a>
+        <a href="#b2b" class="btn-o">Оптовые цены</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="num">298+</div><div class="lbl">позиций в наличии</div></div>
+        <div class="hstat"><div class="num">48V</div><div class="lbl">магнитные треки</div></div>
+        <div class="hstat"><div class="num">2–5 лет</div><div class="lbl">гарантия</div></div>
+        <div class="hstat"><div class="num">1 день</div><div class="lbl">доставка Алматы</div></div>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <div class="hero-grid">
+        <a href="catalog.html?cat=treki" class="hcard"><span class="hcard-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="3" rx="1.5"/><line x1="8" y1="7" x2="8" y2="14"/><circle cx="8" cy="16" r="2"/><line x1="16" y1="7" x2="16" y2="12"/><circle cx="16" cy="14" r="2"/></svg></span><div class="hcard-lbl">Трековые системы<div class="hcard-price">от 1 700 ₸</div></div></a>
+        <a href="catalog.html?cat=spoty" class="hcard"><span class="hcard-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="8"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/></svg></span><div class="hcard-lbl">Споты и точечные<div class="hcard-price">от 248 ₸</div></div></a>
+        <a href="catalog.html?cat=ulichnye" class="hcard"><span class="hcard-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v6"/><path d="M9 8h6l1 10H8L9 8z"/><line x1="7" y1="18" x2="17" y2="18"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg></span><div class="hcard-lbl">Уличное освещение<div class="hcard-price">от 4 590 ₸</div></div></a>
+        <a href="catalog.html?cat=bloki_pitaniya" class="hcard"><span class="hcard-icon"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="6" width="16" height="12" rx="2"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="5" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="19" y2="12"/><line x1="1" y1="10" x2="1" y2="14"/><line x1="23" y1="10" x2="23" y2="14"/></svg></span><div class="hcard-lbl">Блоки питания<div class="hcard-price">от 2 465 ₸</div></div></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CATEGORIES ═══ -->
+<div class="cats-wrap">
+  <div class="sec reveal">
+    <div class="sec-h">
+      <div>
+        <div class="sec-title">Каталог по категориям</div>
+        <div class="sec-sub">Всё для профессионального и домашнего освещения</div>
+      </div>
+      <a href="catalog.html" class="sec-link">Все товары →</a>
+    </div>
+    <div class="cat-grid">
+      <a href="catalog.html?cat=treki_48v" class="ccard"><div class="cicon">🧲</div><div class="cname">Магнитные треки 48V</div><div class="ccnt">32 товара</div></a>
+      <a href="catalog.html?cat=treki_220v" class="ccard"><div class="cicon">💡</div><div class="cname">Треки 220V</div><div class="ccnt">16 товаров</div></a>
+      <a href="catalog.html?cat=ulichnye" class="ccard"><div class="cicon">🏙️</div><div class="cname">Уличные</div><div class="ccnt">13 товаров</div></a>
+      <a href="catalog.html?cat=fasad" class="ccard"><div class="cicon">🏢</div><div class="cname">Фасадные</div><div class="ccnt">32 товара</div></a>
+      <a href="catalog.html?cat=sadovo_park" class="ccard"><div class="cicon">🌳</div><div class="cname">Садово-парковые</div><div class="ccnt">8 товаров</div></a>
+      <a href="catalog.html?cat=spoty" class="ccard"><div class="cicon">🔆</div><div class="cname">Споты и точечные</div><div class="ccnt">64 товара</div></a>
+      <a href="catalog.html?cat=ofisnye" class="ccard"><div class="cicon">🏗️</div><div class="cname">Промышленные</div><div class="ccnt">8 товаров</div></a>
+      <a href="catalog.html?cat=lenty" class="ccard"><div class="cicon">🌈</div><div class="cname">LED ленты</div><div class="ccnt">25 товаров</div></a>
+      <a href="catalog.html?cat=bloki_pitaniya" class="ccard"><div class="cicon">⚡</div><div class="cname">Блоки питания</div><div class="ccnt">33 товара</div></a>
+      <a href="catalog.html?cat=profili" class="ccard"><div class="cicon">📏</div><div class="cname">Профили</div><div class="ccnt">9 товаров</div></a>
+      <a href="catalog.html?cat=datchiki" class="ccard"><div class="cicon">📡</div><div class="cname">Датчики</div><div class="ccnt">12 товаров</div></a>
+      <a href="catalog.html?cat=lampy" class="ccard"><div class="cicon">💡</div><div class="cname">Лампы</div><div class="ccnt">46 товаров</div></a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEATURED PRODUCTS ═══ -->
+<div class="prods-wrap">
+  <div class="sec reveal">
+    <div class="sec-h">
+      <div>
+        <div class="sec-title">Хиты продаж</div>
+        <div class="sec-sub">Самые популярные позиции из нашего каталога</div>
+      </div>
+      <a href="catalog.html" class="sec-link">Весь каталог →</a>
+    </div>
+    <div class="prod-grid" id="FP"></div>
+  </div>
+</div>
+
+<!-- ═══ WHY US ═══ -->
+<div class="why">
+  <div class="sec reveal">
+    <div class="sec-h">
+      <div>
+        <div class="sec-title">Почему выбирают LightCenter</div>
+        <div class="sec-sub">Работаем с 2020 года — знаем всё об освещении в Казахстане</div>
+      </div>
+    </div>
+    <div class="wgrid">
+      <div class="wcard"><div class="wnum">01</div><div class="wtitle">Склад в Алматы</div><div class="wtext">298 позиций в наличии. Отправляем день в день при заказе до 14:00. Самовывоз с ул. Сейфуллина 524.</div></div>
+      <div class="wcard"><div class="wnum">02</div><div class="wtitle">Гарантия 2–5 лет</div><div class="wtext">Официальная гарантия на весь ассортимент. Замена или возврат без вопросов.</div></div>
+      <div class="wcard"><div class="wnum">03</div><div class="wtitle">Технический консультант</div><div class="wtext">Помогаем подобрать решение: расчёт мощности, подбор рельса, подбор спотов. Бесплатно.</div></div>
+      <div class="wcard"><div class="wnum">04</div><div class="wtitle">Доставка по Казахстану</div><div class="wtext">Алматы от 1 дня, регионы 2–5 дней. Работаем с KazPost, Pony Express, CDEK.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ B2B ═══ -->
+<div class="b2b" id="b2b">
+  <div class="b2b-inner reveal">
+    <div>
+      <div class="b2b-title">Работаем<br>с <em>бизнесом</em><br>напрямую</div>
+      <p class="b2b-sub">Специальные условия для строительных компаний, дизайнеров, застройщиков и оптовых покупателей по всему Казахстану.</p>
+      <div class="b2b-feats">
+        <div class="b2b-feat"><div class="b2b-fi">📦</div><div class="b2b-ft"><strong>Оптовые цены от 50 000 ₸</strong><span>Персональные скидки до 35%, прайс-лист по запросу</span></div></div>
+        <div class="b2b-feat"><div class="b2b-fi">📑</div><div class="b2b-ft"><strong>Работаем по счёту и договору</strong><span>ТОО, ИП, государственные закупки, тендеры</span></div></div>
+        <div class="b2b-feat"><div class="b2b-fi">🏗️</div><div class="b2b-ft"><strong>Расчёт проекта под ключ</strong><span>Спецификация, светотехнический расчёт, монтаж</span></div></div>
+        <div class="b2b-feat"><div class="b2b-fi">🚚</div><div class="b2b-ft"><strong>Доставка по всему Казахстану</strong><span>KazPost, Pony Express, CDEK. Алматы — от 1 дня</span></div></div>
+      </div>
+      <a href="https://wa.me/77760007232?text=Здравствуйте!%20Интересуют%20оптовые%20цены" class="btn-g" target="_blank">Получить оптовый прайс →</a>
+    </div>
+    <div class="b2b-form">
+      <div class="b2b-ft2">Заявка на сотрудничество</div>
+      <div class="fg"><label>Компания / ИП</label><input type="text" placeholder="Название организации"></div>
+      <div class="fg"><label>Ваше имя</label><input type="text" placeholder="Имя и фамилия"></div>
+      <div class="fg"><label>Телефон</label><input type="tel" placeholder="+7 (7__) ___-__-__" oninput="phoneMask(event)" maxlength="18"></div>
+      <div class="fg"><label>Тип сотрудничества</label>
+        <select><option>Строительная / дизайн компания</option><option>Оптовый покупатель</option><option>Государственные закупки</option><option>Корпоративные заказы</option><option>Розничный магазин</option></select>
+      </div>
+      <button class="btn-g" style="width:100%;justify-content:center;margin-top:6px" onclick="submitB2B()">Отправить заявку →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PARTNERS ═══ -->
+<div class="partners">
+  <div class="sec reveal">
+    <div class="sec-h">
+      <div>
+        <div class="sec-title">Нам доверяют</div>
+        <div class="sec-sub">Крупнейшие строительные и девелоперские компании Казахстана</div>
+      </div>
+    </div>
+    <div class="partner-grid">
+      <div class="partner-item">BI Group</div>
+      <div class="partner-item">BAZIS-A</div>
+      <div class="partner-item">Sensata Group</div>
+      <div class="partner-item">RAMS Qazaqstan</div>
+      <div class="partner-item">NAK</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TICKER ═══ -->
+<div class="ticker">
+  <p class="ticker-lbl">Консультация и заказ</p>
+  <div style="overflow:hidden">
+    <div class="ticker-track">
+      <a href="tel:+77764785656" class="tpill">📞 +7 (776) 478-56-56</a>
+      <a href="tel:+77760007232" class="tpill">📞 +7 (776) 000-72-32</a>
+      <a href="mailto:info@lightcenter.kz" class="tpill">✉️ info@lightcenter.kz</a>
+      <span class="tpill">📍 Алматы, Сейфуллина 524</span>
+      <a href="https://instagram.com/lightcenter.kz" class="tpill" target="_blank">Instagram: lightcenter.kz</a>
+      <a href="https://wa.me/77760007232" class="tpill" target="_blank">WhatsApp</a>
+      <span class="tpill">Пн–Пт 9:00–19:00</span>
+      <a href="tel:+77764785656" class="tpill">📞 +7 (776) 478-56-56</a>
+      <a href="tel:+77760007232" class="tpill">📞 +7 (776) 000-72-32</a>
+      <a href="mailto:info@lightcenter.kz" class="tpill">✉️ info@lightcenter.kz</a>
+      <span class="tpill">📍 Алматы, Сейфуллина 524</span>
+      <a href="https://instagram.com/lightcenter.kz" class="tpill" target="_blank">Instagram: lightcenter.kz</a>
+      <a href="https://wa.me/77760007232" class="tpill" target="_blank">WhatsApp</a>
+      <span class="tpill">Пн–Пт 9:00–19:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="ftop">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <svg viewBox="0 0 40 48" width="28" height="34" fill="none"><line x1="20" y1="2" x2="20" y2="8" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="32" y1="7" x2="29" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><line x1="8" y1="7" x2="11" y2="12" stroke="#C9943A" stroke-width="2.2" stroke-linecap="round"/><circle cx="20" cy="23" r="12" stroke="#fff" stroke-width="2"/><circle cx="20" cy="23" r="6.5" fill="#C9943A" opacity=".2"/><path d="M15 35Q15 40 16.5 42L23.5 42Q25 40 25 35" stroke="#fff" stroke-width="2" fill="none"/><line x1="16" y1="38" x2="24" y2="38" stroke="#C9943A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div>
+          <div class="fln">Light Center</div>
+          <span class="fle">ESTD 2020 · lightcenter.kz</span>
+        </div>
+      </div>
+      <p class="fdesc">Реализация и продажа светооборудования. Магнитные треки, споты, рельсы, блоки питания и аксессуары. Доставка по всему Казахстану.</p>
+      <div class="fcon">
+        <a href="tel:+77764785656">📞 +7 (776) 478-56-56</a>
+        <a href="tel:+77760007232">📞 +7 (776) 000-72-32</a>
+        <a href="mailto:info@lightcenter.kz">✉️ info@lightcenter.kz</a>
+        <a href="#">📍 Алматы, ул. Сейфуллина 524</a>
+      </div>
+    </div>
+    <div>
+      <div class="fct">Каталог</div>
+      <a class="flink" href="catalog.html?cat=treki">Треки</a>
+      <a class="flink" href="catalog.html?cat=ulichnye">Уличные</a>
+      <a class="flink" href="catalog.html?cat=fasad">Фасадные</a>
+      <a class="flink" href="catalog.html?cat=spoty">Точечные светильники</a>
+      <a class="flink" href="catalog.html?cat=ofisnye">Промышленные</a>
+      <a class="flink" href="catalog.html?cat=lenty">LED ленты</a>
+      <a class="flink" href="catalog.html?cat=bloki_pitaniya">Блоки питания</a>
+      <a class="flink" href="catalog.html?cat=profili">Профили</a>
+    </div>
+    <div>
+      <div class="fct">Компания</div>
+      <a class="flink" href="about.html">О нас</a>
+      <a class="flink" href="#b2b">Оптовикам</a>
+      <a class="flink" href="delivery.html">Доставка и оплата</a>
+      <a class="flink" href="warranty.html">Гарантия</a>
+      <a class="flink" href="faq.html">FAQ</a>
+      <a class="flink" href="reviews.html">Отзывы</a>
+      <a class="flink" href="contacts.html">Контакты</a>
+    </div>
+    <div>
+      <div class="fct">Мы в сети</div>
+      <a class="flink" href="https://instagram.com/lightcenter.kz" target="_blank">Instagram</a>
+      <a class="flink" href="https://wa.me/77760007232" target="_blank">WhatsApp</a>
+      <a class="flink" href="#" target="_blank">Telegram</a>
+      <div style="margin-top:20px">
+        <div class="fct">Режим работы</div>
+        <span class="flink">Пн–Пт: 9:00–19:00</span>
+        <span class="flink">Сб: 10:00–16:00</span>
+      </div>
+    </div>
+  </div>
+  <div class="fbot">
+    <div class="fcopy">© 2025 LightCenter.kz — Реализация и продажа светооборудования</div>
+    <div class="fleg"><a href="#">Конфиденциальность</a><a href="#">Оферта</a></div>
+  </div>
+</footer>
+
+<!-- ═══ FLOATING BUTTONS ═══ -->
+<div class="floats">
+  <button class="float-btn ftop-btn" id="BT" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <span class="ftip">Наверх</span>↑
+  </button>
+  <a href="https://wa.me/77760007232?text=Здравствуйте!%20Хочу%20узнать%20о%20товаре" class="float-btn fwa" target="_blank">
+    <span class="ftip">WhatsApp</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.528 5.854L0 24l6.293-1.497A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+  </a>
+  <a href="https://t.me/lightcenterkz" class="float-btn ftg" target="_blank">
+    <span class="ftip">Telegram</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+  </a>
+</div>
+<div class="toast" id="TOAST"></div>
+<div class="cookie-bar" id="COOKIES">Мы используем файлы cookie для улучшения работы сайта. <button onclick="acceptCookies()">Понятно</button></div>
+</div><!-- /.wrapper -->
+
+<script src="data.js"></script>
+<script>
+// ═══ IDs хитов продаж (берутся из общей базы P) ═══
+var FEATURED_IDS = [182, 2, 68, 98, 280, 36, 174, 247];
+
+function renderFeatured() {
+  var g = document.getElementById('FP');
+  if (!g) return;
+  var items = findByIds(FEATURED_IDS);
+  var h = '';
+  for (var i = 0; i < items.length; i++) {
+    var p = items[i].product, gi = items[i].index;
+    var badge = '';
+    if (i < 2) badge = '<span class="pbadge bhit">Хит</span>';
+    var waText = encodeURIComponent('Здравствуйте! Интересует: ' + p.name + ' (' + fmtPrice(p.price) + ')');
+    h += '<div class="pcard" style="animation:cardIn .4s ease ' + (i * 0.05) + 's forwards;opacity:0">'
+      + '<div class="pimg"><img src="' + p.img + '" alt="' + p.name + '" loading="lazy" onerror="this.style.display=\'none\'">'
+      + badge
+      + '<div class="pquick">'
+      + '<a href="https://wa.me/' + WA_PHONE + '?text=' + waText + '" target="_blank" class="qkbtn g">WhatsApp</a>'
+      + '<a href="catalog.html" class="qkbtn">Подробнее</a>'
+      + '</div></div>'
+      + '<div class="pbody"><div class="pbrand">' + getCatLabel(p.cat) + '</div>'
+      + '<div class="pname">' + p.name + '</div>'
+      + '<div class="pfooter"><span class="pprice">' + fmtPrice(p.price) + ' <small>/' + p.unit + '</small></span>'
+      + '<a href="https://wa.me/' + WA_PHONE + '?text=' + waText + '" target="_blank" class="pwa">'
+      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.528 5.854L0 24l6.293-1.497A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>'
+      + 'Заказать</a></div></div></div>';
+  }
+  g.innerHTML = h;
+}
+
+// ═══ B2B форма → Telegram + WhatsApp ═══
+async function submitB2B() {
+  var company = document.querySelector('.b2b-form input[placeholder="Название организации"]').value.trim();
+  var name    = document.querySelector('.b2b-form input[placeholder="Имя и фамилия"]').value.trim();
+  var phone   = document.querySelector('.b2b-form input[type="tel"]').value.trim();
+  var type    = document.querySelector('.b2b-form select').value || '—';
+
+  // ── Валидация ──
+  if (name.length < 2) { toast('⚠️ Укажите имя'); return; }
+  if (phone.replace(/\D/g, '').length < 11) { toast('⚠️ Проверьте номер телефона'); return; }
+
+  var orderId = generateOrderId();
+
+  var tgText = '🏢 <b>B2B-заявка ' + orderId + '</b>\n\n'
+    + '🏭 Компания: ' + escTg(company || '—') + '\n'
+    + '👤 Имя: ' + escTg(name) + '\n'
+    + '📞 Телефон: ' + escTg(phone) + '\n'
+    + '📋 Тип: ' + escTg(type) + '\n'
+    + '━━━━━━━━━━━━━━\n'
+    + '🕐 ' + new Date().toLocaleString('ru-RU');
+
+  var waText = 'B2B-заявка ' + orderId + '\n\n'
+    + 'Компания: ' + (company || '—') + '\n'
+    + 'Имя: ' + name + '\n'
+    + 'Телефон: ' + phone + '\n'
+    + 'Тип: ' + type;
+
+  var sent = await sendToTelegram(tgText);
+  openWhatsApp(waText);
+
+  if (sent) {
+    toast('✅ Заявка ' + orderId + ' отправлена!');
+    // Цель конверсии Google Ads — подставь ярлык из кабинета: 'AW-XXXXXXXXXX/XXXXXXXX'
+    if (window.gtag) gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXXX/XXXXXXXX' });
+    if (window.ym && window.LC_YM_ID) ym(window.LC_YM_ID, 'reachGoal', 'b2b_lead');
+  } else {
+    toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
+  }
+}
+
+// ═══ Nav Search ═══
+function toggleNavSearch() {
+  var w = document.getElementById('NSW');
+  w.classList.toggle('open');
+  if (w.classList.contains('open')) document.getElementById('NSI').focus();
+}
+function navSearch() {
+  var q = document.getElementById('NSI').value.trim();
+  if (!q) return;
+  window.location.href = 'catalog.html?search=' + encodeURIComponent(q);
+}
+
+// ═══ Scroll effects ═══
+function onScroll() {
+  var st = window.scrollY;
+  var nav = document.getElementById('NAV');
+  var bt = document.getElementById('BT');
+  if (st > 60) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+  if (st > 400) bt.classList.add('show'); else bt.classList.remove('show');
+}
+
+function revealOnScroll() {
+  var els = document.querySelectorAll('.reveal');
+  for (var i = 0; i < els.length; i++) {
+    if (els[i].getBoundingClientRect().top < window.innerHeight - 80) {
+      els[i].classList.add('visible');
+    }
+  }
+}
+
+// ═══ Mobile menu ═══
+function openMobile() { document.getElementById('MOB').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeMobile() { document.getElementById('MOB').classList.remove('open'); document.body.style.overflow = ''; }
+
+// ═══ Cookie consent ═══
+function acceptCookies() {
+  try { localStorage.setItem('lc_cookies', '1'); } catch(e) {}
+  var el = document.getElementById('COOKIES');
+  if (el) { el.classList.remove('show'); }
+}
+(function() {
+  try { if (!localStorage.getItem('lc_cookies')) { setTimeout(function() { var el = document.getElementById('COOKIES'); if (el) el.classList.add('show'); }, 1000); } } catch(e) {}
+})();
+
+// ═══ Click outside closes search ═══
+document.addEventListener('click', function(e) {
+  var w = document.getElementById('NSW');
+  if (w && w.classList.contains('open') && !w.contains(e.target)) {
+    w.classList.remove('open');
+  }
+});
+
+// ═══ Init ═══
+window.addEventListener('scroll', function() { onScroll(); revealOnScroll(); });
+window.addEventListener('load', function() { renderFeatured(); revealOnScroll(); });
+
+// Перерисовка хитов, когда из базы пришёл свежий каталог
+document.addEventListener('lc:products-loaded', function() { renderFeatured(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Служебное / будущая админка второго сайта — закрыть от индексации
+Disallow: /admin/
+Disallow: /*?*sort=
+Disallow: /*?*utm_
+
+Sitemap: https://lightcenter.kz/sitemap.xml
