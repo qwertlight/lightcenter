@@ -62,6 +62,11 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .toolbar input,.toolbar select{padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--white)}
 .toolbar input{flex:1;min-width:180px}
 .toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--gold)}
+.catbar{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:14px}
+.chip{flex-shrink:0;white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-family:var(--fb);font-size:13px;font-weight:500;color:var(--mid);cursor:pointer;transition:background .15s,border-color .15s;min-height:38px}
+.chip:active{transform:scale(.97)}
+.chip.active{background:var(--dark);border-color:var(--dark);color:#fff}
+.chip .c{opacity:.55;font-size:12px;margin-left:3px}
 
 .list{display:flex;flex-direction:column;gap:8px}
 .row{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
@@ -174,10 +179,17 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
   <div class="wrap">
     <div class="toolbar">
       <input type="search" id="SEARCH" placeholder="Поиск по названию…">
-      <select id="CATFILTER"><option value="all">Все категории</option></select>
+      <select id="SORT">
+        <option value="default">Сортировка: по порядку</option>
+        <option value="new">Сначала новые</option>
+        <option value="name">Название А–Я</option>
+        <option value="price_asc">Цена ↑</option>
+        <option value="price_desc">Цена ↓</option>
+      </select>
       <button class="btn-ghost" id="IMPORT_BTN">Импорт Excel</button>
       <button class="btn-add" id="ADD_BTN">+ Товар</button>
     </div>
+    <div class="catbar" id="CATBAR"></div>
     <input type="file" id="XLS_FILE" accept=".xlsx" class="hidden">
     <div class="list" id="LIST"></div>
   </div>
@@ -284,6 +296,7 @@ var sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
 // ── Состояние ──
 var products=[], cats=[], catLabel={};
 var editingId=null, editMode='edit', editImages=[];
+var curCat='all', curSort='default';
 
 // ── Утилиты ──
 function $(id){return document.getElementById(id);}
@@ -325,12 +338,29 @@ async function reloadProducts(){
   var pr=await sb.from('products').select('*').order('sort_order');
   if(pr.error)throw pr.error;
   products=pr.data||[];
+  renderCatbar();
   renderList();
 }
 function fillCatControls(){
   var opts=cats.map(function(c){return '<option value="'+esc(c.slug)+'">'+esc(c.label)+'</option>';}).join('');
-  $('CATFILTER').innerHTML='<option value="all">Все категории</option>'+opts;
   $('F_CAT').innerHTML=opts;
+  renderCatbar();
+}
+function renderCatbar(){
+  var bar=$('CATBAR'); if(!bar) return;
+  var counts={}; for(var i=0;i<products.length;i++)counts[products[i].cat]=(counts[products[i].cat]||0)+1;
+  var h='<button class="chip'+(curCat==='all'?' active':'')+'" data-cat="all">Все<span class="c">'+products.length+'</span></button>';
+  for(var j=0;j<cats.length;j++){
+    var c=cats[j];
+    h+='<button class="chip'+(curCat===c.slug?' active':'')+'" data-cat="'+esc(c.slug)+'">'+esc(c.label)+'<span class="c">'+(counts[c.slug]||0)+'</span></button>';
+  }
+  bar.innerHTML=h;
+}
+function setCat(cat){
+  curCat=cat;
+  var chips=document.querySelectorAll('#CATBAR .chip');
+  for(var i=0;i<chips.length;i++)chips[i].classList.toggle('active',chips[i].getAttribute('data-cat')===cat);
+  renderList();
 }
 // список фото товара (совместимо со старым одиночным img)
 function imagesOf(p){
@@ -341,12 +371,16 @@ function imagesOf(p){
 
 // ══ СПИСОК ══
 function renderList(){
-  var q=$('SEARCH').value.trim().toLowerCase(), cf=$('CATFILTER').value;
+  var q=$('SEARCH').value.trim().toLowerCase(), cf=curCat;
   var rows=products.filter(function(p){
     if(cf!=='all'&&p.cat!==cf)return false;
     if(q&&(p.name||'').toLowerCase().indexOf(q)===-1)return false;
     return true;
   });
+  if(curSort==='name')rows.sort(function(a,b){return String(a.name).localeCompare(String(b.name),'ru');});
+  else if(curSort==='price_asc')rows.sort(function(a,b){return a.price-b.price;});
+  else if(curSort==='price_desc')rows.sort(function(a,b){return b.price-a.price;});
+  else if(curSort==='new')rows.sort(function(a,b){return b.id-a.id;});
   $('COUNT').textContent='· '+products.length+' товаров';
   var el=$('LIST');
   if(!rows.length){el.innerHTML='<div class="empty">Ничего не найдено.</div>';return;}
@@ -682,7 +716,8 @@ $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
 $('LOGOUT_BTN').addEventListener('click',handleLogout);
 $('SEARCH').addEventListener('input',renderList);
-$('CATFILTER').addEventListener('change',renderList);
+$('SORT').addEventListener('change',function(){curSort=this.value;renderList();});
+$('CATBAR').addEventListener('click',function(e){var b=e.target.closest('[data-cat]');if(b)setCat(b.getAttribute('data-cat'));});
 $('ADD_BTN').addEventListener('click',openCreate);
 $('LIST').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)openEdit(parseInt(b.getAttribute('data-id'),10));});
 $('F_PHOTOS').addEventListener('click',function(e){
