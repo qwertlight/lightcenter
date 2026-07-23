@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -687,6 +688,78 @@ async function moveCategory(i,dir){
 
 // ══ ИМПОРТ EXCEL ══
 var importRows = [];
+
+// ── Извлечение фото, вставленных прямо в таблицу ──
+// Excel хранит картинки отдельным слоем и привязывает к строке позиционно.
+// Читаем .xlsx как архив, находим привязки и сопоставляем со строками.
+function xmlDoc(str){ return new DOMParser().parseFromString(str,'application/xml'); }
+function tagAll(node,name){ return Array.prototype.slice.call(node.getElementsByTagNameNS('*',name)); }
+function resolveTarget(target){
+  // Разные редакторы пишут путь по-разному:
+  // "../media/image1.png" (Excel) или "/xl/drawings/drawing1.xml" (openpyxl и др.)
+  var t=String(target||'').replace(/^\.\.\//,'').replace(/^\//,'');
+  return t.indexOf('xl/')===0?t:'xl/'+t;
+}
+async function extractSheetImages(file){
+  var out={ byRow:{}, count:0, inCellDetected:false };
+  if(typeof JSZip==='undefined')return out;
+  try{
+    var zip=await JSZip.loadAsync(await file.arrayBuffer());
+
+    // признак «фото в ячейке» (новый формат Excel 365 / WPS) — их привязка иная
+    if(zip.file('xl/cellimages.xml')||zip.folder('xl/richData').file(/.+/).length)out.inCellDetected=true;
+
+    // берём первый лист
+    var sheetPath='xl/worksheets/sheet1.xml';
+    if(!zip.file(sheetPath))return out;
+    var sheetXml=await zip.file(sheetPath).async('string');
+    var dr=tagAll(xmlDoc(sheetXml),'drawing')[0];
+    if(!dr)return out;
+    var drId=dr.getAttribute('r:id')||dr.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');
+
+    // лист -> файл рисунков
+    var sRelsFile=zip.file('xl/worksheets/_rels/sheet1.xml.rels');
+    if(!sRelsFile)return out;
+    var sRels=xmlDoc(await sRelsFile.async('string'));
+    var drawingPath='';
+    tagAll(sRels,'Relationship').forEach(function(r){
+      if(r.getAttribute('Id')===drId)drawingPath=resolveTarget(r.getAttribute('Target'));
+    });
+    if(!drawingPath||!zip.file(drawingPath))return out;
+
+    // рисунки -> media
+    var dName=drawingPath.split('/').pop();
+    var dRelsFile=zip.file('xl/drawings/_rels/'+dName+'.rels');
+    var relMap={};
+    if(dRelsFile){
+      tagAll(xmlDoc(await dRelsFile.async('string')),'Relationship').forEach(function(r){
+        relMap[r.getAttribute('Id')]=resolveTarget(r.getAttribute('Target'));
+      });
+    }
+
+    var dDoc=xmlDoc(await zip.file(drawingPath).async('string'));
+    var anchors=tagAll(dDoc,'twoCellAnchor').concat(tagAll(dDoc,'oneCellAnchor'));
+    for(var i=0;i<anchors.length;i++){
+      var a=anchors[i];
+      var from=tagAll(a,'from')[0]; if(!from)continue;
+      var rowEl=tagAll(from,'row')[0], colEl=tagAll(from,'col')[0];
+      if(!rowEl)continue;
+      var rowIdx=parseInt(rowEl.textContent,10);          // 0-based: совпадает с индексом в rows[]
+      var colIdx=colEl?parseInt(colEl.textContent,10):0;
+      var blip=tagAll(a,'blip')[0]; if(!blip)continue;
+      var embed=blip.getAttribute('r:embed')||blip.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','embed');
+      var mediaPath=relMap[embed];
+      if(!mediaPath||!zip.file(mediaPath))continue;
+      var blob=await zip.file(mediaPath).async('blob');
+      var ext=(mediaPath.split('.').pop()||'png').toLowerCase();
+      (out.byRow[rowIdx]=out.byRow[rowIdx]||[]).push({col:colIdx,blob:blob,ext:ext});
+      out.count++;
+    }
+    // в пределах строки — слева направо
+    Object.keys(out.byRow).forEach(function(k){ out.byRow[k].sort(function(a,b){return a.col-b.col;}); });
+  }catch(e){ console.warn('[LightCenter] Не удалось прочитать фото из файла:',e); }
+  return out;
+}
 function labelToSlugMap(){ var m={}; cats.forEach(function(c){ m[String(c.label).toLowerCase().trim()]=c.slug; }); return m; }
 function badgeToCode(v){ v=String(v||'').toLowerCase(); if(v.indexOf('новин')!==-1)return 'new'; if(v.indexOf('акци')!==-1)return 'sale'; if(v.indexOf('хит')!==-1)return 'hit'; return ''; }
 function colIndexes(hdr){
@@ -711,11 +784,14 @@ async function handleXls(file){
     var wb=XLSX.read(buf,{type:'array'});
     var sn=wb.SheetNames.indexOf('Товары')!==-1?'Товары':wb.SheetNames[0];
     var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
-    parseRows(rows);
+    toast('Читаю фото из файла…');
+    var imgs=await extractSheetImages(file);
+    parseRows(rows,imgs);
   }catch(e){ toast('Не удалось прочитать файл',true); }
   $('XLS_FILE').value='';
 }
-function parseRows(rows){
+function parseRows(rows,imgs){
+  imgs=imgs||{byRow:{},count:0,inCellDetected:false};
   if(!rows||rows.length<2){ toast('В файле нет строк с товарами',true); return; }
   var idx=colIndexes(rows[0]);
   if(idx.name===undefined||idx.price===undefined||idx.cat===undefined){
@@ -739,23 +815,33 @@ function parseRows(rows){
     var unit=(idx.unit!==undefined?String(row[idx.unit]||'').trim():'')||'шт';
     var desc=idx.desc!==undefined?String(row[idx.desc]||'').trim():'';
     var badge=idx.badge!==undefined?badgeToCode(row[idx.badge]):'';
-    var imgs=[];
-    if(idx.images!==undefined)imgs=String(row[idx.images]||'').split(',').map(function(s){return s.trim();}).filter(function(s){return /^https?:\/\//i.test(s);});
-    valid.push({name:name,price:price,cat:slug,unit:unit,badge:badge,description:desc,active:true,images:imgs,img:imgs[0]||'',sort_order:base+(valid.length+1)*10});
+    var imgs_=[];
+    if(idx.images!==undefined)imgs_=String(row[idx.images]||'').split(',').map(function(s){return s.trim();}).filter(function(s){return /^https?:\/\//i.test(s);});
+    valid.push({name:name,price:price,cat:slug,unit:unit,badge:badge,description:desc,active:true,images:imgs_,img:imgs_[0]||'',sort_order:base+(valid.length+1)*10,_files:(imgs.byRow[r]||[])});
   }
   importRows=valid;
-  showImportPreview(valid,errors);
+  showImportPreview(valid,errors,imgs);
 }
-function showImportPreview(valid,errors){
+function showImportPreview(valid,errors,imgs){
+  imgs=imgs||{count:0,inCellDetected:false};
+  var fromFile=valid.reduce(function(n,p){return n+((p._files&&p._files.length)||0);},0);
   $('IMP_SUM').innerHTML='Готово к импорту: <span class="imp-ok">'+valid.length+'</span>'
+    +(fromFile?(' · фото из файла: <span class="imp-ok">'+fromFile+'</span>'):'')
     +(errors.length?(' · с ошибками (пропущены): <span class="imp-bad">'+errors.length+'</span>'):'');
   var t=$('IMP_TABLE');
   if(valid.length){
     var h='<tr><th>Название</th><th>Цена</th><th>Категория</th><th>Фото</th></tr>';
     var lim=Math.min(valid.length,80);
-    for(var i=0;i<lim;i++){var p=valid[i];h+='<tr><td>'+esc(p.name)+'</td><td>'+fmtPrice(p.price)+'</td><td>'+esc(catLabel[p.cat]||p.cat)+'</td><td>'+(p.images.length||'—')+'</td></tr>';}
+    for(var i=0;i<lim;i++){
+      var p=valid[i];
+      var nf=(p._files&&p._files.length)||0, nl=p.images.length;
+      var ph=nf?(nf+' из файла'):(nl?(nl+' по ссылке'):'—');
+      h+='<tr><td>'+esc(p.name)+'</td><td>'+fmtPrice(p.price)+'</td><td>'+esc(catLabel[p.cat]||p.cat)+'</td><td>'+ph+'</td></tr>';
+    }
     t.innerHTML=h;
-    $('IMP_HINT').textContent=valid.length>80?('Показаны первые 80 из '+valid.length+'. Импортируются все.'):'';
+    var hint=valid.length>80?('Показаны первые 80 из '+valid.length+'. Импортируются все. '):'';
+    if(imgs.inCellDetected&&!fromFile)hint+='В файле есть фото в новом формате «в ячейке» — такие прочитать не удаётся. Вставьте картинки обычным способом или используйте колонку со ссылками.';
+    $('IMP_HINT').textContent=hint;
   }else{ t.innerHTML=''; $('IMP_HINT').textContent=''; }
   var e=$('IMP_ERRS');
   if(errors.length){
@@ -774,11 +860,33 @@ async function doImport(){
   if(!importRows.length)return;
   var btn=$('IMP_DO');btn.disabled=true;btn.textContent='Импорт…';
   try{
+    // сначала заливаем фото, вставленные в таблицу
+    var total=importRows.reduce(function(n,p){return n+((p._files&&p._files.length)||0);},0);
+    var done=0, failed=0;
+    for(var i=0;i<importRows.length;i++){
+      var p=importRows[i];
+      if(p._files&&p._files.length){
+        for(var k=0;k<p._files.length;k++){
+          var f=p._files[k];
+          try{
+            var path='products/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+(f.ext||'png');
+            var up=await sb.storage.from(BUCKET).upload(path,f.blob,{cacheControl:'3600',upsert:false,contentType:'image/'+(f.ext==='jpg'?'jpeg':f.ext)});
+            if(up.error)throw up.error;
+            p.images.push(sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
+          }catch(e){ failed++; }
+          done++;
+          btn.textContent='Загрузка фото '+done+'/'+total;
+        }
+        p.img=p.images[0]||'';
+      }
+      delete p._files; // служебное поле не отправляем в базу
+    }
+    btn.textContent='Импорт…';
     var res=await sb.from('products').insert(importRows).select();
     if(res.error)throw res.error;
     await reloadProducts();
     closeImport();
-    toast('Импортировано: '+importRows.length);
+    toast('Импортировано: '+importRows.length+(failed?(', фото с ошибкой: '+failed):''),failed>0);
     importRows=[];
   }catch(e){ toast('Ошибка импорта. Проверьте данные и попробуйте снова.',true); btn.disabled=false; btn.textContent='Импортировать'; }
 }
