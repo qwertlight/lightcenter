@@ -559,7 +559,13 @@ function render(cat) {
     filtered.push({ p: p, gi: i });
   }
   document.getElementById('SC').textContent = filtered.length + ' ' + decl(filtered.length);
-  if (!filtered.length) { g.innerHTML = '<div class="no-results">🔍 Ничего не найдено.</div>'; return; }
+  if (!filtered.length) {
+    var msg = P.length
+      ? '🔍 Ничего не найдено.'
+      : '⏳ Каталог загружается…';
+    g.innerHTML = '<div class="no-results">' + msg + '</div>';
+    return;
+  }
   var h = '';
   for (var i = 0; i < filtered.length; i++) {
     var p = filtered[i].p, gi = filtered[i].gi;
