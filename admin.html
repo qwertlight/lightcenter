@@ -174,6 +174,7 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     <div class="brand"><span class="brand-dot">L</span>LightCenter <span class="count" id="COUNT"></span></div>
     <div class="spacer"></div>
     <button class="btn-ghost" id="CATS_BTN">Категории</button>
+    <button class="btn-ghost" id="BACKUP_BTN">Бэкап</button>
     <button class="btn-ghost" id="LOGOUT_BTN">Выйти</button>
   </header>
   <div class="wrap">
@@ -711,6 +712,67 @@ async function doImport(){
   }catch(e){ toast('Ошибка импорта. Проверьте данные и попробуйте снова.',true); btn.disabled=false; btn.textContent='Импортировать'; }
 }
 
+// ══ БЭКАП КАТАЛОГА ══
+function pad2(n){return n<10?'0'+n:''+n;}
+function stamp(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes());}
+function downloadBlob(blob,filename){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+async function makeBackup(){
+  var btn=$('BACKUP_BTN');btn.disabled=true;btn.textContent='Выгрузка…';
+  try{
+    // берём свежие данные прямо из базы, а не из экрана
+    var pr=await sb.from('products').select('*').order('sort_order');
+    if(pr.error)throw pr.error;
+    var cr=await sb.from('categories').select('*').order('sort_order');
+    if(cr.error)throw cr.error;
+
+    var backup={
+      сайт:'LightCenter.kz',
+      дата:new Date().toLocaleString('ru-RU'),
+      версия:1,
+      всего_товаров:(pr.data||[]).length,
+      всего_категорий:(cr.data||[]).length,
+      categories:cr.data||[],
+      products:pr.data||[]
+    };
+    downloadBlob(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),
+                 'lightcenter-backup-'+stamp()+'.json');
+
+    // дополнительно — читаемая таблица Excel
+    if(typeof XLSX!=='undefined'){
+      var rows=(pr.data||[]).map(function(p){
+        return {
+          'ID':p.id,
+          'Название':p.name,
+          'Цена':p.price,
+          'Категория':catLabel[p.cat]||p.cat,
+          'Код категории':p.cat,
+          'Единица':p.unit,
+          'Описание':p.description||'',
+          'Метка':p.badge||'',
+          'Показывать':p.active?'да':'нет',
+          'Фото':(p.images&&p.images.length?p.images:(p.img?[p.img]:[])).join(', ')
+        };
+      });
+      var wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Товары');
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((cr.data||[]).map(function(c){
+        return {'Категория':c.label,'Код':c.slug,'Порядок':c.sort_order};
+      })),'Категории');
+      XLSX.writeFile(wb,'lightcenter-backup-'+stamp()+'.xlsx');
+    }
+    toast('Бэкап готов: '+(pr.data||[]).length+' товаров');
+  }catch(e){
+    toast('Не удалось сделать бэкап. Попробуйте ещё раз.',true);
+  }finally{
+    btn.disabled=false;btn.textContent='Бэкап';
+  }
+}
+
 // ══ СОБЫТИЯ ══
 $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
@@ -742,6 +804,7 @@ $('IMPORTMODAL').addEventListener('click',function(e){if(e.target===this)closeIm
 
 // категории
 $('CATS_BTN').addEventListener('click',openCatManager);
+$('BACKUP_BTN').addEventListener('click',makeBackup);
 $('CAT_X').addEventListener('click',closeCatManager);
 $('CAT_CLOSE').addEventListener('click',closeCatManager);
 $('CAT_ADD').addEventListener('click',addCategory);
