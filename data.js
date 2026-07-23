@@ -3,10 +3,10 @@
 // Подключается к index.html И catalog.html через <script src="data.js">
 // ═══════════════════════════════════════════════════════
 
-// ── Telegram config ──
-var TG_BOT_TOKEN = '8684934995:AAFAODRrroH-eZk_cq23tD3nDMKkpc6gAXk';
-var TG_CHAT_IDS  = ['7893397903', '6863967763'];
-var WA_PHONE     = '77760007232';
+// ── Контакты ──
+// Токен Telegram-бота вынесен на сервер (Supabase Edge Function «send-lead»).
+// В браузер он больше не попадает — заявки уходят через серверную функцию.
+var WA_PHONE = '77760007232';
 
 // ── Supabase (чтение каталога из базы; ключ публичный, доступ ограничен политиками RLS) ──
 var SB_URL = 'https://njpkjbswntwyutvqwhpo.supabase.co';
@@ -69,23 +69,27 @@ function matchCat(pcat, fcat) {
   return false;
 }
 
-// ── Telegram API (мульти-рассылка) ──
+// ── Отправка заявки через серверную функцию (токен бота на сервере) ──
+// Возвращает true только при подтверждённой доставке.
 async function sendToTelegram(text) {
-  if (!TG_BOT_TOKEN || TG_BOT_TOKEN === 'YOUR_BOT_TOKEN') {
-    console.warn('[LightCenter] Telegram не настроен');
-    return false;
-  }
   try {
-    var results = await Promise.all(TG_CHAT_IDS.map(function(chatId) {
-      return fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
-      }).then(function(r) { return r.ok; }).catch(function() { return false; });
-    }));
-    return results.some(function(ok) { return ok; }); // доставлено хотя бы одному получателю
+    var res = await fetch(SB_URL + '/functions/v1/send-lead', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SB_KEY,
+        Authorization: 'Bearer ' + SB_KEY
+      },
+      body: JSON.stringify({ text: text })
+    });
+    if (!res.ok) {
+      console.error('[LightCenter] Заявка не отправлена, код:', res.status);
+      return false;
+    }
+    var data = await res.json();
+    return !!(data && data.ok);
   } catch (e) {
-    console.error('[LightCenter] Telegram error:', e);
+    console.error('[LightCenter] Ошибка отправки заявки:', e);
     return false;
   }
 }
