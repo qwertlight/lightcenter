@@ -649,6 +649,15 @@ function renderFeatured() {
   var g = document.getElementById('FP');
   if (!g) return;
   var items = findByIds(FEATURED_IDS);
+  // Если закреплённых товаров нет в базе (их удалили или ID изменились),
+  // показываем первые товары каталога, чтобы блок не оставался пустым.
+  if (items.length < 4) {
+    var seen = {};
+    for (var k = 0; k < items.length; k++) seen[items[k].product.id] = true;
+    for (var m = 0; m < P.length && items.length < 8; m++) {
+      if (!seen[P[m].id]) { items.push({ product: P[m], index: m }); seen[P[m].id] = true; }
+    }
+  }
   var h = '';
   for (var i = 0; i < items.length; i++) {
     var p = items[i].product, gi = items[i].index;
