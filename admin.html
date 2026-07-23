@@ -68,6 +68,18 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .chip.active{background:var(--dark);border-color:var(--dark);color:#fff}
 .chip .c{opacity:.55;font-size:12px;margin-left:3px}
 
+.bulkbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--white);border:1px solid var(--gold-l);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;position:sticky;top:62px;z-index:15}
+.bulk-all{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500}
+.bulk-all input{width:18px;height:18px;accent-color:var(--gold)}
+.bulk-count{font-size:13px;color:var(--gold-d);font-weight:600}
+.bulk-sp{flex:1}
+.bulkbar select{padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:var(--cream);font-size:14px;min-height:40px}
+.bulkbar select:focus{outline:none;border-color:var(--gold)}
+.bulk-del{min-height:40px;border-radius:9px;padding:0 14px;font-size:14px;font-weight:600}
+.bulkbar .btn-ghost{min-height:40px}
+.row-check{width:20px;height:20px;accent-color:var(--gold);flex-shrink:0;cursor:pointer}
+.row.selected{border-color:var(--gold);background:var(--gold-p)}
+
 .list{display:flex;flex-direction:column;gap:8px}
 .row{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
 .row.is-hidden{opacity:.55}
@@ -191,6 +203,16 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
       <button class="btn-add" id="ADD_BTN">+ Товар</button>
     </div>
     <div class="catbar" id="CATBAR"></div>
+    <div class="bulkbar hidden" id="BULKBAR">
+      <label class="bulk-all"><input type="checkbox" id="BULK_ALL"><span>Выбрать все</span></label>
+      <span class="bulk-count" id="BULK_COUNT"></span>
+      <div class="bulk-sp"></div>
+      <select id="BULK_CAT"><option value="">Перенести в категорию…</option></select>
+      <button class="btn-ghost" id="BULK_PRICE">Цены</button>
+      <button class="btn-ghost" id="BULK_TOP">↑ Наверх</button>
+      <button class="btn-danger bulk-del" id="BULK_DEL">Удалить</button>
+      <button class="btn-ghost" id="BULK_CLEAR">Снять</button>
+    </div>
     <input type="file" id="XLS_FILE" accept=".xlsx" class="hidden">
     <div class="list" id="LIST"></div>
   </div>
@@ -235,6 +257,7 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     </div>
     <div class="sheet-foot">
       <button class="btn-danger hidden" id="DELETE_BTN">Удалить</button>
+      <button class="btn-ghost hidden" id="DUP_BTN">Дублировать</button>
       <button class="btn-ghost" id="EDIT_CANCEL">Отмена</button>
       <button class="btn btn-primary" id="EDIT_SAVE">Сохранить</button>
     </div>
@@ -281,6 +304,46 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
   </div>
 </div>
 
+<!-- PRICE SHEET -->
+<div class="overlay" id="PRICEMODAL">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 id="PRICE_TITLE">Изменить цены</h2>
+      <button class="x" id="PRICE_X" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="field">
+        <label for="PRICE_OP">Что сделать</label>
+        <select id="PRICE_OP">
+          <option value="pct_up">Повысить на %</option>
+          <option value="pct_down">Понизить на %</option>
+          <option value="add">Прибавить ₸</option>
+          <option value="sub">Вычесть ₸</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="PRICE_VAL">Значение</label>
+        <input type="number" id="PRICE_VAL" min="0" step="1" inputmode="numeric" placeholder="напр. 10">
+      </div>
+      <div class="field">
+        <label for="PRICE_ROUND">Округление</label>
+        <select id="PRICE_ROUND">
+          <option value="1">Без округления</option>
+          <option value="10">До 10 ₸</option>
+          <option value="100" selected>До 100 ₸</option>
+          <option value="1000">До 1000 ₸</option>
+        </select>
+      </div>
+      <div class="imp-wrap"><table class="imp-table" id="PRICE_PREVIEW"></table></div>
+      <div class="imp-hint" id="PRICE_HINT"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" id="PRICE_CANCEL">Отмена</button>
+      <button class="btn btn-primary" id="PRICE_APPLY">Применить</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="TOAST"></div>
 
 <script>
@@ -298,6 +361,7 @@ var sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY) : null;
 var products=[], cats=[], catLabel={};
 var editingId=null, editMode='edit', editImages=[];
 var curCat='all', curSort='default';
+var selected={}, visibleIds=[];
 
 // ── Утилиты ──
 function $(id){return document.getElementById(id);}
@@ -345,6 +409,7 @@ async function reloadProducts(){
 function fillCatControls(){
   var opts=cats.map(function(c){return '<option value="'+esc(c.slug)+'">'+esc(c.label)+'</option>';}).join('');
   $('F_CAT').innerHTML=opts;
+  $('BULK_CAT').innerHTML='<option value="">Перенести в категорию…</option>'+opts;
   renderCatbar();
 }
 function renderCatbar(){
@@ -383,8 +448,9 @@ function renderList(){
   else if(curSort==='price_desc')rows.sort(function(a,b){return b.price-a.price;});
   else if(curSort==='new')rows.sort(function(a,b){return b.id-a.id;});
   $('COUNT').textContent='· '+products.length+' товаров';
+  visibleIds=rows.map(function(p){return p.id;});
   var el=$('LIST');
-  if(!rows.length){el.innerHTML='<div class="empty">Ничего не найдено.</div>';return;}
+  if(!rows.length){el.innerHTML='<div class="empty">Ничего не найдено.</div>';updateBulkBar();return;}
   var h='';
   for(var i=0;i<rows.length;i++){
     var p=rows[i], imgs=imagesOf(p);
@@ -393,13 +459,16 @@ function renderList(){
     var badge=p.badge?'<span class="tag">'+esc(p.badge==='new'?'Новинка':p.badge==='sale'?'Акция':p.badge==='hit'?'Хит':p.badge)+'</span>':'';
     var off=p.active?'':'<span class="tag tag-off">Скрыт</span>';
     var pc=imgs.length?'<span class="tag tag-photos">📷 '+imgs.length+'</span>':'<span class="tag tag-photos">без фото</span>';
-    h+='<div class="row'+(p.active?'':' is-hidden')+'">'+thumb
+    h+='<div class="row'+(p.active?'':' is-hidden')+(selected[p.id]?' selected':'')+'">'
+      +'<input type="checkbox" class="row-check" data-sel="'+p.id+'"'+(selected[p.id]?' checked':'')+' aria-label="Выбрать товар">'
+      +thumb
       +'<div class="row-main"><div class="row-name">'+esc(p.name)+'</div>'
       +'<div class="row-meta"><span class="tag">'+esc(catLabel[p.cat]||p.cat)+'</span>'+pc+badge+off+'</div></div>'
       +'<div class="row-price">'+fmtPrice(p.price)+'</div>'
       +'<button class="row-edit" data-id="'+p.id+'">Изменить</button></div>';
   }
   el.innerHTML=h;
+  updateBulkBar();
 }
 
 // ══ ФОРМА: открыть ══
@@ -420,6 +489,7 @@ function openEdit(id){
   editMode='edit';editingId=id;
   $('EDIT_TITLE').textContent='#'+p.id+' · изменить';
   $('DELETE_BTN').classList.remove('hidden');
+  $('DUP_BTN').classList.remove('hidden');
   fillForm(p);
   $('EDIT').classList.add('open');lockScroll(true);
 }
@@ -427,6 +497,7 @@ function openCreate(){
   editMode='create';editingId=null;
   $('EDIT_TITLE').textContent='Новый товар';
   $('DELETE_BTN').classList.add('hidden');
+  $('DUP_BTN').classList.add('hidden');
   fillForm({active:true});
   $('EDIT').classList.add('open');lockScroll(true);
 }
@@ -712,6 +783,150 @@ async function doImport(){
   }catch(e){ toast('Ошибка импорта. Проверьте данные и попробуйте снова.',true); btn.disabled=false; btn.textContent='Импортировать'; }
 }
 
+// ══ МАССОВЫЕ ОПЕРАЦИИ ══
+function selectedIds(){var a=[];for(var k in selected)if(selected[k])a.push(parseInt(k,10));return a;}
+function clearSelection(){selected={};renderList();}
+function updateBulkBar(){
+  var ids=selectedIds(), bar=$('BULKBAR');
+  if(!ids.length){bar.classList.add('hidden');$('BULK_ALL').checked=false;return;}
+  bar.classList.remove('hidden');
+  $('BULK_COUNT').textContent='Выбрано: '+ids.length;
+  var allVisible=visibleIds.length>0&&visibleIds.every(function(id){return selected[id];});
+  $('BULK_ALL').checked=allVisible;
+}
+function toggleSel(id,on){ if(on)selected[id]=true; else delete selected[id]; }
+function toggleAllVisible(on){
+  for(var i=0;i<visibleIds.length;i++)toggleSel(visibleIds[i],on);
+  renderList();
+}
+async function bulkMove(slug){
+  var ids=selectedIds();
+  if(!ids.length||!slug)return;
+  var c=cats.find(function(x){return x.slug===slug;});
+  if(!window.confirm('Перенести '+ids.length+' товаров в категорию «'+(c?c.label:slug)+'»?')){$('BULK_CAT').value='';return;}
+  var sel=$('BULK_CAT');sel.disabled=true;
+  try{
+    var res=await sb.from('products').update({cat:slug}).in('id',ids).select();
+    if(res.error)throw res.error;
+    selected={};
+    await reloadProducts();
+    toast('Перенесено: '+ids.length);
+  }catch(e){toast('Не удалось перенести. Попробуйте ещё раз.',true);}
+  finally{sel.disabled=false;sel.value='';}
+}
+async function bulkDelete(){
+  var ids=selectedIds();
+  if(!ids.length)return;
+  if(!window.confirm('Удалить '+ids.length+' товаров? Это действие необратимо.\n\nСовет: сначала сделайте бэкап.'))return;
+  var btn=$('BULK_DEL');btn.disabled=true;btn.textContent='Удаление…';
+  try{
+    // соберём фото удаляемых товаров, чтобы подчистить хранилище
+    var doomed=products.filter(function(p){return ids.indexOf(p.id)!==-1;});
+    var res=await sb.from('products').delete().in('id',ids);
+    if(res.error)throw res.error;
+    doomed.forEach(function(p){imagesOf(p).forEach(removePhotoFromStorage);});
+    selected={};
+    await reloadProducts();
+    toast('Удалено: '+ids.length);
+  }catch(e){toast('Не удалось удалить. Попробуйте ещё раз.',true);}
+  finally{btn.disabled=false;btn.textContent='Удалить';}
+}
+
+// ══ ДУБЛИРОВАНИЕ ТОВАРА ══
+async function duplicateProduct(){
+  if(editingId==null)return;
+  var p=products.find(function(x){return x.id===editingId;});
+  if(!p)return;
+  var btn=$('DUP_BTN');btn.disabled=true;btn.textContent='Копирую…';
+  try{
+    var copy={
+      name:(p.name||'')+' (копия)', price:p.price, cat:p.cat, unit:p.unit,
+      badge:p.badge||'', description:p.description||'', active:p.active!==false,
+      images:(p.images||[]).slice(), img:p.img||'', sort_order:(p.sort_order||0)+1
+    };
+    var res=await sb.from('products').insert(copy).select();
+    if(res.error)throw res.error;
+    await reloadProducts();
+    toast('Копия создана — отредактируйте её');
+    // сразу открываем копию для правки
+    if(res.data&&res.data[0])openEdit(res.data[0].id);
+  }catch(e){toast('Не удалось создать копию',true);}
+  finally{btn.disabled=false;btn.textContent='Дублировать';}
+}
+
+// ══ МАССОВОЕ ИЗМЕНЕНИЕ ЦЕН ══
+function roundTo(v,step){ step=parseInt(step,10)||1; return Math.max(0,Math.round(v/step)*step); }
+function calcNewPrice(old){
+  var op=$('PRICE_OP').value, val=parseFloat($('PRICE_VAL').value)||0, step=$('PRICE_ROUND').value;
+  var n=old;
+  if(op==='pct_up')n=old*(1+val/100);
+  else if(op==='pct_down')n=old*(1-val/100);
+  else if(op==='add')n=old+val;
+  else if(op==='sub')n=old-val;
+  return roundTo(n,step);
+}
+function openPriceModal(){
+  var ids=selectedIds(); if(!ids.length)return;
+  $('PRICE_TITLE').textContent='Изменить цены — '+ids.length+' товаров';
+  $('PRICE_VAL').value='';
+  renderPricePreview();
+  $('PRICEMODAL').classList.add('open');lockScroll(true);
+}
+function closePriceModal(){$('PRICEMODAL').classList.remove('open');lockScroll(false);}
+function renderPricePreview(){
+  var ids=selectedIds();
+  var list=products.filter(function(p){return ids.indexOf(p.id)!==-1;});
+  var h='<tr><th>Товар</th><th>Было</th><th>Станет</th></tr>';
+  var lim=Math.min(list.length,20);
+  for(var i=0;i<lim;i++){
+    var p=list[i], np=calcNewPrice(p.price);
+    h+='<tr><td>'+esc(p.name)+'</td><td>'+fmtPrice(p.price)+'</td><td><b>'+fmtPrice(np)+'</b></td></tr>';
+  }
+  $('PRICE_PREVIEW').innerHTML=h;
+  $('PRICE_HINT').textContent=list.length>20?('Показаны первые 20 из '+list.length+'. Изменятся все.'):'';
+}
+async function applyPriceChange(){
+  var ids=selectedIds(); if(!ids.length)return;
+  var val=parseFloat($('PRICE_VAL').value);
+  if(isNaN(val)||val<0){toast('Укажите значение',true);return;}
+  var list=products.filter(function(p){return ids.indexOf(p.id)!==-1;});
+  if(!window.confirm('Изменить цены у '+list.length+' товаров?'))return;
+  var btn=$('PRICE_APPLY');btn.disabled=true;btn.textContent='Применяю…';
+  try{
+    var fails=0;
+    for(var i=0;i<list.length;i++){
+      var np=calcNewPrice(list[i].price);
+      var r=await sb.from('products').update({price:np}).eq('id',list[i].id);
+      if(r.error)fails++;
+      btn.textContent='Применяю… '+(i+1)+'/'+list.length;
+    }
+    selected={};
+    await reloadProducts();
+    closePriceModal();
+    toast(fails?('Изменено с ошибками: '+fails):'Цены обновлены: '+list.length, fails>0);
+  }catch(e){toast('Не удалось изменить цены',true);}
+  finally{btn.disabled=false;btn.textContent='Применить';}
+}
+
+// ══ ПОДНЯТЬ НАВЕРХ ══
+async function bulkMoveTop(){
+  var ids=selectedIds(); if(!ids.length)return;
+  var minSort=0;
+  for(var i=0;i<products.length;i++){var s=products[i].sort_order||0; if(s<minSort)minSort=s;}
+  // сохраняем взаимный порядок выбранных
+  var list=products.filter(function(p){return ids.indexOf(p.id)!==-1;});
+  var btn=$('BULK_TOP');btn.disabled=true;btn.textContent='Поднимаю…';
+  try{
+    for(var j=list.length-1,step=1;j>=0;j--,step++){
+      await sb.from('products').update({sort_order:minSort-step*10}).eq('id',list[j].id);
+    }
+    selected={};
+    await reloadProducts();
+    toast('Поднято наверх: '+list.length);
+  }catch(e){toast('Не удалось изменить порядок',true);}
+  finally{btn.disabled=false;btn.textContent='↑ Наверх';}
+}
+
 // ══ БЭКАП КАТАЛОГА ══
 function pad2(n){return n<10?'0'+n:''+n;}
 function stamp(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())+'_'+pad2(d.getHours())+'-'+pad2(d.getMinutes());}
@@ -786,9 +1001,29 @@ async function makeBackup(){
 $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
 $('LOGOUT_BTN').addEventListener('click',handleLogout);
-$('SEARCH').addEventListener('input',renderList);
-$('SORT').addEventListener('change',function(){curSort=this.value;renderList();});
-$('CATBAR').addEventListener('click',function(e){var b=e.target.closest('[data-cat]');if(b)setCat(b.getAttribute('data-cat'));});
+$('SEARCH').addEventListener('input',function(){selected={};renderList();});
+$('SORT').addEventListener('change',function(){curSort=this.value;selected={};renderList();});
+$('CATBAR').addEventListener('click',function(e){var b=e.target.closest('[data-cat]');if(b){selected={};setCat(b.getAttribute('data-cat'));}});
+// массовый выбор
+$('LIST').addEventListener('change',function(e){
+  var cb=e.target.closest('[data-sel]');
+  if(cb){toggleSel(parseInt(cb.getAttribute('data-sel'),10),cb.checked);
+    cb.closest('.row').classList.toggle('selected',cb.checked);updateBulkBar();}
+});
+$('BULK_ALL').addEventListener('change',function(){toggleAllVisible(this.checked);});
+$('BULK_CLEAR').addEventListener('click',clearSelection);
+$('BULK_DEL').addEventListener('click',bulkDelete);
+$('BULK_PRICE').addEventListener('click',openPriceModal);
+$('BULK_TOP').addEventListener('click',bulkMoveTop);
+$('DUP_BTN').addEventListener('click',duplicateProduct);
+$('PRICE_X').addEventListener('click',closePriceModal);
+$('PRICE_CANCEL').addEventListener('click',closePriceModal);
+$('PRICE_APPLY').addEventListener('click',applyPriceChange);
+$('PRICEMODAL').addEventListener('click',function(e){if(e.target===this)closePriceModal();});
+$('PRICE_OP').addEventListener('change',renderPricePreview);
+$('PRICE_VAL').addEventListener('input',renderPricePreview);
+$('PRICE_ROUND').addEventListener('change',renderPricePreview);
+$('BULK_CAT').addEventListener('change',function(){bulkMove(this.value);});
 $('ADD_BTN').addEventListener('click',openCreate);
 $('LIST').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)openEdit(parseInt(b.getAttribute('data-id'),10));});
 $('F_PHOTOS').addEventListener('click',function(e){
