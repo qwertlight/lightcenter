@@ -742,7 +742,8 @@ async function makeBackup(){
     downloadBlob(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}),
                  'lightcenter-backup-'+stamp()+'.json');
 
-    // дополнительно — читаемая таблица Excel
+    // дополнительно — читаемая таблица Excel.
+    // Пауза: браузеры блокируют два скачивания подряд с одной страницы.
     if(typeof XLSX!=='undefined'){
       var rows=(pr.data||[]).map(function(p){
         return {
@@ -758,14 +759,22 @@ async function makeBackup(){
           'Фото':(p.images&&p.images.length?p.images:(p.img?[p.img]:[])).join(', ')
         };
       });
-      var wb=XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Товары');
-      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((cr.data||[]).map(function(c){
+      var cats_rows=(cr.data||[]).map(function(c){
         return {'Категория':c.label,'Код':c.slug,'Порядок':c.sort_order};
-      })),'Категории');
-      XLSX.writeFile(wb,'lightcenter-backup-'+stamp()+'.xlsx');
+      });
+      setTimeout(function(){
+        try{
+          var wb=XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Товары');
+          XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(cats_rows),'Категории');
+          XLSX.writeFile(wb,'lightcenter-backup-'+stamp()+'.xlsx');
+          toast('Excel-копия тоже скачана');
+        }catch(e){
+          toast('Excel-копию скачать не удалось, основной .json сохранён',true);
+        }
+      },1500);
     }
-    toast('Бэкап готов: '+(pr.data||[]).length+' товаров');
+    toast('Бэкап .json готов: '+(pr.data||[]).length+' товаров');
   }catch(e){
     toast('Не удалось сделать бэкап. Попробуйте ещё раз.',true);
   }finally{
