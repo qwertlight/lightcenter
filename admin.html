@@ -160,6 +160,11 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 .imp-errs div{margin:2px 0}
 .imp-hint{font-size:12px;color:var(--light);margin-top:8px}
 
+.co-sec{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-d);margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gold-l)}
+.co-sec:first-child{margin-top:0}
+#CO_BODY .field input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--cream)}
+#CO_BODY .field input:focus{outline:none;border-color:var(--gold);background:var(--white)}
+
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:80;opacity:0;transition:transform .25s,opacity .25s;max-width:90vw;text-align:center}
 .toast.show{transform:translate(-50%,0);opacity:1}
 .toast.err{background:var(--danger)}
@@ -187,6 +192,7 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     <div class="brand"><span class="brand-dot">L</span>LightCenter <span class="count" id="COUNT"></span></div>
     <div class="spacer"></div>
     <button class="btn-ghost" id="CATS_BTN">Категории</button>
+    <button class="btn-ghost" id="COMPANY_BTN">Компания</button>
     <button class="btn-ghost" id="BACKUP_BTN">Бэкап</button>
     <button class="btn-ghost" id="LOGOUT_BTN">Выйти</button>
   </header>
@@ -341,6 +347,59 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     <div class="sheet-foot">
       <button class="btn-ghost" id="PRICE_CANCEL">Отмена</button>
       <button class="btn btn-primary" id="PRICE_APPLY">Применить</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANY SHEET -->
+<div class="overlay" id="COMPANYMODAL">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Данные компании</h2>
+      <button class="x" id="CO_X" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="sheet-body" id="CO_BODY">
+      <div class="co-sec">Контакты</div>
+      <div class="grid2">
+        <div class="field"><label>Телефон 1</label><input type="text" data-s="phone1"></div>
+        <div class="field"><label>Телефон 2</label><input type="text" data-s="phone2"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>WhatsApp (номер)</label><input type="text" data-s="whatsapp" placeholder="77760007232"></div>
+        <div class="field"><label>Email</label><input type="text" data-s="email"></div>
+      </div>
+      <div class="field"><label>Адрес</label><input type="text" data-s="address"></div>
+      <div class="grid2">
+        <div class="field"><label>Instagram (ссылка)</label><input type="text" data-s="instagram"></div>
+        <div class="field"><label>Telegram (ссылка)</label><input type="text" data-s="telegram" placeholder="https://t.me/..."></div>
+      </div>
+
+      <div class="co-sec">Режим работы</div>
+      <div class="field"><label>Будни</label><input type="text" data-s="hours_week"></div>
+      <div class="grid2">
+        <div class="field"><label>Суббота</label><input type="text" data-s="hours_sat"></div>
+        <div class="field"><label>Воскресенье</label><input type="text" data-s="hours_sun"></div>
+      </div>
+
+      <div class="co-sec">Доставка</div>
+      <div class="field"><label>Бесплатная доставка от</label><input type="text" data-s="free_from" placeholder="100 000 ₸"></div>
+
+      <div class="co-sec">Реквизиты (для оплаты по счёту)</div>
+      <div class="field"><label>Наименование</label><input type="text" data-s="req_name" placeholder="ТОО «…» / ИП …"></div>
+      <div class="grid2">
+        <div class="field"><label>БИН / ИИН</label><input type="text" data-s="req_bin"></div>
+        <div class="field"><label>Кбе</label><input type="text" data-s="req_kbe"></div>
+      </div>
+      <div class="field"><label>Юр. адрес</label><input type="text" data-s="req_addr"></div>
+      <div class="grid2">
+        <div class="field"><label>Банк</label><input type="text" data-s="req_bank"></div>
+        <div class="field"><label>IBAN</label><input type="text" data-s="req_iban"></div>
+      </div>
+      <div class="upload-note" style="text-align:left">Пустые поля не показываются на сайте. Изменения появятся после обновления страницы.</div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" id="CO_CANCEL">Отмена</button>
+      <button class="btn btn-primary" id="CO_SAVE">Сохранить</button>
     </div>
   </div>
 </div>
@@ -1105,6 +1164,34 @@ async function makeBackup(){
   }
 }
 
+// ══ ДАННЫЕ КОМПАНИИ ══
+var companyData={};
+async function openCompany(){
+  try{
+    var res=await sb.from('settings').select('data').eq('id',1).single();
+    if(res.error)throw res.error;
+    companyData=res.data.data||{};
+  }catch(e){ toast('Не удалось загрузить настройки',true); return; }
+  var inputs=document.querySelectorAll('#CO_BODY [data-s]');
+  for(var i=0;i<inputs.length;i++){ inputs[i].value=companyData[inputs[i].getAttribute('data-s')]||''; }
+  $('COMPANYMODAL').classList.add('open'); lockScroll(true);
+}
+function closeCompany(){ $('COMPANYMODAL').classList.remove('open'); lockScroll(false); }
+async function saveCompany(){
+  var inputs=document.querySelectorAll('#CO_BODY [data-s]');
+  var data=Object.assign({},companyData);
+  for(var i=0;i<inputs.length;i++){ data[inputs[i].getAttribute('data-s')]=inputs[i].value.trim(); }
+  var btn=$('CO_SAVE');btn.disabled=true;btn.textContent='Сохранение…';
+  try{
+    var res=await sb.from('settings').update({data:data,updated_at:new Date().toISOString()}).eq('id',1).select();
+    if(res.error)throw res.error;
+    companyData=data;
+    closeCompany();
+    toast('Данные компании сохранены');
+  }catch(e){ toast('Не удалось сохранить',true); }
+  finally{ btn.disabled=false;btn.textContent='Сохранить'; }
+}
+
 // ══ СОБЫТИЯ ══
 $('LOGIN_BTN').addEventListener('click',handleLogin);
 $('PASS').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin();});
@@ -1157,6 +1244,11 @@ $('IMPORTMODAL').addEventListener('click',function(e){if(e.target===this)closeIm
 // категории
 $('CATS_BTN').addEventListener('click',openCatManager);
 $('BACKUP_BTN').addEventListener('click',makeBackup);
+$('COMPANY_BTN').addEventListener('click',openCompany);
+$('CO_X').addEventListener('click',closeCompany);
+$('CO_CANCEL').addEventListener('click',closeCompany);
+$('CO_SAVE').addEventListener('click',saveCompany);
+$('COMPANYMODAL').addEventListener('click',function(e){if(e.target===this)closeCompany();});
 $('CAT_X').addEventListener('click',closeCatManager);
 $('CAT_CLOSE').addEventListener('click',closeCatManager);
 $('CAT_ADD').addEventListener('click',addCategory);
