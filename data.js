@@ -255,8 +255,8 @@ function applySettings(){
     if(hv){ he.setAttribute('href',hv); if(he.hasAttribute('data-lc-hide')) he.style.display=''; }
     else if(he.hasAttribute('data-lc-hide')) he.style.display='none';
   }
-  // скрыть пустые строки реквизитов на странице контактов
-  var rows=document.querySelectorAll('.ct-req-row');
+  // скрыть пустые строки реквизитов (страница контактов и «О компании»)
+  var rows=document.querySelectorAll('.ct-req-row, .req-row');
   for(var r=0;r<rows.length;r++){ var vb=rows[r].querySelector('[data-lc]'); if(vb) rows[r].style.display=(vb.textContent.trim()?'':'none'); }
 }
 async function refreshSettings(){
