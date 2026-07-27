@@ -341,7 +341,7 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
       <h2>Оставить заявку</h2>
       <p class="ct-form-sub">Перезвоним и поможем подобрать освещение под ваш проект.</p>
       <input type="text" id="CT_NAME" placeholder="Ваше имя" required>
-      <input type="tel" id="CT_PHONE" placeholder="+7 (7__) ___-__-__" maxlength="18" required>
+      <input type="tel" id="CT_PHONE" placeholder="+7 (7__) ___-__-__" oninput="phoneMask(event)" maxlength="18" required>
       <textarea id="CT_MSG" placeholder="Комментарий (необязательно)"></textarea>
       <button class="ct-btn" onclick="submitContact()" data-event="contact_submit">Отправить заявку</button>
     </div>
@@ -390,6 +390,14 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
       <a class="flink" data-lc-href="instagram" href="https://instagram.com/lightcenter.kz" target="_blank" rel="noopener">Instagram</a><a class="flink" data-lc-wa href="https://wa.me/77760007232" target="_blank" rel="noopener">WhatsApp</a><a class="flink" data-lc-href="telegram" data-lc-hide href="#" target="_blank" rel="noopener">Telegram</a>
       <div style="margin-top:20px"><div class="fct">Режим работы</div><span class="flink" data-lc="hours_week">Пн–Пт: 9:00–19:00</span><span class="flink" data-lc="hours_sat" data-lc-hide>Сб: 10:00–16:00</span><span class="flink" data-lc="hours_sun" data-lc-hide>Вс: выходной</span></div>
     </div>
+  </div>
+  <div class="freq" style="max-width:1200px;margin:0 auto;padding:18px 28px 0;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;color:rgba(255,255,255,.42);line-height:1.7">
+    <span data-lc="req_name" data-lc-hide data-lc-clear></span>
+    <span data-lc="req_bin" data-lc-pre="БИН/ИИН " data-lc-hide data-lc-clear></span>
+    <span data-lc="req_kbe" data-lc-pre="Кбе " data-lc-hide data-lc-clear></span>
+    <span data-lc="req_bank" data-lc-hide data-lc-clear></span>
+    <span data-lc="req_iban" data-lc-pre="IBAN " data-lc-hide data-lc-clear></span>
+    <span data-lc="req_addr" data-lc-hide data-lc-clear></span>
   </div>
   <div class="fbot"><div class="fcopy">© 2025 LightCenter.kz — Реализация и продажа светооборудования</div><div class="fleg"><a href="#">Конфиденциальность</a><a href="#">Оферта</a></div></div>
 </footer>
