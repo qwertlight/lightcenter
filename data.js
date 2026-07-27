@@ -227,7 +227,49 @@ async function refreshCategories() {
   }
 }
 
-function refreshAll() { refreshCategories(); refreshProducts(); }
+function refreshAll() { refreshCategories(); refreshProducts(); refreshSettings(); }
+
+// ── Настройки компании (контакты, реквизиты, доставка) из базы ──
+var SETTINGS = null;
+function lcDigits(s){ return String(s==null?'':s).replace(/\D/g,''); }
+function applySettings(){
+  if(!SETTINGS) return;
+  var set=SETTINGS, D=lcDigits;
+  var els=document.querySelectorAll('[data-lc]');
+  for(var i=0;i<els.length;i++){
+    var el=els[i], v=set[el.getAttribute('data-lc')];
+    if(v==null||v===''){ if(el.hasAttribute('data-lc-clear')) el.textContent=''; if(el.hasAttribute('data-lc-hide')) el.style.display='none'; continue; }
+    if(el.hasAttribute('data-lc-hide')) el.style.display='';
+    el.textContent=(el.getAttribute('data-lc-pre')||'')+v;
+    if(el.hasAttribute('data-lc-tel')) el.setAttribute('href','tel:+'+D(v));
+    if(el.hasAttribute('data-lc-mail')) el.setAttribute('href','mailto:'+v);
+  }
+  var tk=document.querySelectorAll('[data-lc-tel-key]');
+  for(var a=0;a<tk.length;a++){ var tv=set[tk[a].getAttribute('data-lc-tel-key')]; if(tv) tk[a].setAttribute('href','tel:+'+D(tv)); }
+  var mk=document.querySelectorAll('[data-lc-mail-key]');
+  for(var b=0;b<mk.length;b++){ var mv=set[mk[b].getAttribute('data-lc-mail-key')]; if(mv) mk[b].setAttribute('href','mailto:'+mv); }
+  var wa=document.querySelectorAll('[data-lc-wa]');
+  for(var j=0;j<wa.length;j++) wa[j].setAttribute('href','https://wa.me/'+D(set.whatsapp||set.phone1));
+  var hrefs=document.querySelectorAll('[data-lc-href]');
+  for(var k=0;k<hrefs.length;k++){ var he=hrefs[k], hv=set[he.getAttribute('data-lc-href')];
+    if(hv){ he.setAttribute('href',hv); if(he.hasAttribute('data-lc-hide')) he.style.display=''; }
+    else if(he.hasAttribute('data-lc-hide')) he.style.display='none';
+  }
+  // скрыть пустые строки реквизитов на странице контактов
+  var rows=document.querySelectorAll('.ct-req-row');
+  for(var r=0;r<rows.length;r++){ var vb=rows[r].querySelector('[data-lc]'); if(vb) rows[r].style.display=(vb.textContent.trim()?'':'none'); }
+}
+async function refreshSettings(){
+  try{
+    var res=await fetch(SB_URL+'/rest/v1/settings?select=data&id=eq.1',{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});
+    if(!res.ok) return false;
+    var rows=await res.json();
+    if(!Array.isArray(rows)||!rows.length||!rows[0].data) return false;
+    SETTINGS=rows[0].data; applySettings();
+    document.dispatchEvent(new CustomEvent('lc:settings-loaded'));
+    return true;
+  }catch(e){ return false; }
+}
 
 // Стартуем загрузку как можно раньше; страницы перерисуются по событиям lc:*-loaded.
 if (document.readyState === 'loading') {
