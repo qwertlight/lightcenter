@@ -287,8 +287,8 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
       <a href="faq.html" class="mob-link">FAQ</a>
       <a href="contacts.html" class="mob-link active">Контакты</a>
     </div>
-    <a href="tel:+77760007232" class="mob-phone">📞 +7 (776) 000-72-32</a>
-    <a href="https://wa.me/77760007232" class="mob-wa" target="_blank"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.528 5.854L0 24l6.293-1.497A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>Написать в WhatsApp</a>
+    <a href="tel:+77760007232" class="mob-phone" data-lc="phone1" data-lc-pre="📞 " data-lc-tel>📞 +7 (776) 000-72-32</a>
+    <a href="https://wa.me/77760007232" class="mob-wa" data-lc-wa target="_blank"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.122 1.528 5.854L0 24l6.293-1.497A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>Написать в WhatsApp</a>
   </div>
 </div>
 
@@ -302,32 +302,32 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
 
 <section class="ct-main">
   <div class="ct-wrap ct-grid">
-    <a class="ct-card" href="tel:+77760007232" data-event="phone_click">
+    <a class="ct-card" href="tel:+77760007232" data-lc-tel-key="phone1" data-event="phone_click">
       <div class="ct-ic">📞</div><div class="ct-lbl">Телефон</div>
-      <div class="ct-val">+7 (776) 000-72-32</div>
-      <div class="ct-sub">+7 (776) 478-56-56</div>
+      <div class="ct-val" data-lc="phone1">+7 (776) 000-72-32</div>
+      <div class="ct-sub" data-lc="phone2" data-lc-hide>+7 (776) 478-56-56</div>
     </a>
-    <a class="ct-card" href="https://wa.me/77760007232" target="_blank" rel="noopener" data-event="whatsapp_click">
+    <a class="ct-card" data-lc-wa href="https://wa.me/77760007232" target="_blank" rel="noopener" data-event="whatsapp_click">
       <div class="ct-ic">💬</div><div class="ct-lbl">WhatsApp</div>
       <div class="ct-val">Написать в WhatsApp</div>
       <div class="ct-sub">Ответим в рабочее время</div>
     </a>
-    <a class="ct-card" href="mailto:info@lightcenter.kz" data-event="email_click">
+    <a class="ct-card" data-lc-mail-key="email" href="mailto:info@lightcenter.kz" data-event="email_click">
       <div class="ct-ic">✉️</div><div class="ct-lbl">Почта</div>
-      <div class="ct-val">info@lightcenter.kz</div>
+      <div class="ct-val" data-lc="email">info@lightcenter.kz</div>
       <div class="ct-sub">Заявки и документы</div>
     </a>
     <div class="ct-card">
       <div class="ct-ic">📍</div><div class="ct-lbl">Адрес</div>
-      <div class="ct-val">Алматы, ул. Сейфуллина 524</div>
+      <div class="ct-val" data-lc="address">Алматы, ул. Сейфуллина 524</div>
       <div class="ct-sub">Самовывоз со склада</div>
     </div>
     <div class="ct-card">
       <div class="ct-ic">🕐</div><div class="ct-lbl">Режим работы</div>
-      <div class="ct-val">Пн–Пт: 9:00–19:00</div>
-      <div class="ct-sub">Сб: 10:00–16:00 · Вс: выходной</div>
+      <div class="ct-val" data-lc="hours_week">Пн–Пт: 9:00–19:00</div>
+      <div class="ct-sub" data-lc="hours_sat">Сб: 10:00–16:00</div>
     </div>
-    <a class="ct-card" href="https://instagram.com/lightcenter.kz" target="_blank" rel="noopener" data-event="instagram_click">
+    <a class="ct-card" data-lc-href="instagram" href="https://instagram.com/lightcenter.kz" target="_blank" rel="noopener" data-event="instagram_click">
       <div class="ct-ic">📷</div><div class="ct-lbl">Instagram</div>
       <div class="ct-val">@lightcenter.kz</div>
       <div class="ct-sub">Новинки и проекты</div>
@@ -349,13 +349,13 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
     <div class="ct-req">
       <h2>Реквизиты компании</h2>
       <!-- ЗАПОЛНИТЕ РЕКВИЗИТЫ: замените прочерки на свои данные. Ненужную строку можно удалить. -->
-      <div class="ct-req-row"><span>Наименование</span><b>ИП / ТОО «____________»</b></div>
-      <div class="ct-req-row"><span>БИН / ИИН</span><b>____________</b></div>
-      <div class="ct-req-row"><span>Юр. адрес</span><b>г. Алматы, ____________</b></div>
-      <div class="ct-req-row"><span>Банк</span><b>____________</b></div>
-      <div class="ct-req-row"><span>IBAN</span><b>KZ__ ____ ____ ____ ____</b></div>
-      <div class="ct-req-row"><span>Кбе</span><b>__</b></div>
-      <div class="ct-req-row"><span>Email</span><b>info@lightcenter.kz</b></div>
+      <div class="ct-req-row"><span>Наименование</span><b data-lc="req_name" data-lc-clear>ИП / ТОО «____________»</b></div>
+      <div class="ct-req-row"><span>БИН / ИИН</span><b data-lc="req_bin" data-lc-clear>____________</b></div>
+      <div class="ct-req-row"><span>Юр. адрес</span><b data-lc="req_addr" data-lc-clear>г. Алматы, ____________</b></div>
+      <div class="ct-req-row"><span>Банк</span><b data-lc="req_bank" data-lc-clear>____________</b></div>
+      <div class="ct-req-row"><span>IBAN</span><b data-lc="req_iban" data-lc-clear>KZ__ ____ ____ ____ ____</b></div>
+      <div class="ct-req-row"><span>Кбе</span><b data-lc="req_kbe" data-lc-clear>__</b></div>
+      <div class="ct-req-row"><span>Email</span><b data-lc="email">info@lightcenter.kz</b></div>
       <div class="ct-req-note">Реквизиты нужны юр. лицам для оплаты по счёту. Отредактируйте их в файле <b>contacts.html</b> (блок «Реквизиты компании»).</div>
     </div>
   </div>
@@ -371,10 +371,10 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
       </div>
       <p class="fdesc">Реализация и продажа светооборудования. Магнитные треки, споты, рельсы, блоки питания и аксессуары.</p>
       <div class="fcon">
-        <a href="tel:+77760007232">📞 +7 (776) 000-72-32</a>
-        <a href="tel:+77764785656">📞 +7 (776) 478-56-56</a>
-        <a href="mailto:info@lightcenter.kz">✉️ info@lightcenter.kz</a>
-        <a href="#">📍 Алматы, ул. Сейфуллина 524</a>
+        <a href="tel:+77760007232" data-lc="phone1" data-lc-pre="📞 " data-lc-tel>📞 +7 (776) 000-72-32</a>
+        <a href="tel:+77764785656" data-lc="phone2" data-lc-pre="📞 " data-lc-tel data-lc-hide>📞 +7 (776) 478-56-56</a>
+        <a href="mailto:info@lightcenter.kz" data-lc="email" data-lc-pre="✉️ " data-lc-mail>✉️ info@lightcenter.kz</a>
+        <a href="#" data-lc="address" data-lc-pre="📍 ">📍 Алматы, ул. Сейфуллина 524</a>
       </div>
     </div>
     <div>
@@ -387,8 +387,8 @@ a.ct-card:hover{transform:translateY(-2px);border-color:#C9943A;box-shadow:0 8px
     </div>
     <div>
       <div class="fct">Мы в сети</div>
-      <a class="flink" href="https://instagram.com/lightcenter.kz" target="_blank">Instagram</a><a class="flink" href="https://wa.me/77760007232" target="_blank">WhatsApp</a><a class="flink" href="#" target="_blank">Telegram</a>
-      <div style="margin-top:20px"><div class="fct">Режим работы</div><span class="flink">Пн–Пт: 9:00–19:00</span><span class="flink">Сб: 10:00–16:00</span></div>
+      <a class="flink" data-lc-href="instagram" href="https://instagram.com/lightcenter.kz" target="_blank" rel="noopener">Instagram</a><a class="flink" data-lc-wa href="https://wa.me/77760007232" target="_blank" rel="noopener">WhatsApp</a><a class="flink" data-lc-href="telegram" data-lc-hide href="#" target="_blank" rel="noopener">Telegram</a>
+      <div style="margin-top:20px"><div class="fct">Режим работы</div><span class="flink" data-lc="hours_week">Пн–Пт: 9:00–19:00</span><span class="flink" data-lc="hours_sat" data-lc-hide>Сб: 10:00–16:00</span><span class="flink" data-lc="hours_sun" data-lc-hide>Вс: выходной</span></div>
     </div>
   </div>
   <div class="fbot"><div class="fcopy">© 2025 LightCenter.kz — Реализация и продажа светооборудования</div><div class="fleg"><a href="#">Конфиденциальность</a><a href="#">Оферта</a></div></div>
