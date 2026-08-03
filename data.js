@@ -71,7 +71,7 @@ function matchCat(pcat, fcat) {
 
 // ── Отправка заявки через серверную функцию (токен бота на сервере) ──
 // Возвращает true только при подтверждённой доставке.
-async function sendToTelegram(text) {
+async function sendToTelegram(text, lead) {
   try {
     var res = await fetch(SB_URL + '/functions/v1/send-lead', {
       method: 'POST',
@@ -80,7 +80,7 @@ async function sendToTelegram(text) {
         apikey: SB_KEY,
         Authorization: 'Bearer ' + SB_KEY
       },
-      body: JSON.stringify({ text: text })
+      body: JSON.stringify({ text: text, lead: lead || null })
     });
     if (!res.ok) {
       console.error('[LightCenter] Заявка не отправлена, код:', res.status);

@@ -162,6 +162,20 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
 
 .co-sec{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gold-d);margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gold-l)}
 .co-sec:first-child{margin-top:0}
+.lead-row{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.lead-row.is-new{border-color:var(--gold);background:var(--gold-p)}
+.lead-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.lead-type{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--dark);color:#fff}
+.lead-date{font-size:12px;color:var(--light);margin-left:auto}
+.lead-name{font-weight:600;font-size:15px}
+.lead-phone{color:var(--gold-d);text-decoration:none;font-weight:500}
+.lead-body{font-size:13px;color:var(--mid);margin:4px 0;line-height:1.5}
+.lead-amount{font-weight:600}
+.lead-actions{display:flex;gap:8px;align-items:center;margin-top:8px}
+.lead-actions select{padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--cream);font-size:13px}
+.lead-del{margin-left:auto;width:32px;height:32px;border:1px solid #F1D5D1;background:var(--danger-bg);color:var(--danger);border-radius:8px;font-size:13px;cursor:pointer}
+.leads-empty{text-align:center;color:var(--mid);padding:50px 20px}
+.leads-filter{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
 #CO_BODY .field input{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;background:var(--cream)}
 #CO_BODY .field input:focus{outline:none;border-color:var(--gold);background:var(--white)}
 
@@ -191,6 +205,7 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
   <header class="topbar">
     <div class="brand"><span class="brand-dot">L</span>LightCenter <span class="count" id="COUNT"></span></div>
     <div class="spacer"></div>
+    <button class="btn-ghost" id="LEADS_BTN">Заявки</button>
     <button class="btn-ghost" id="CATS_BTN">Категории</button>
     <button class="btn-ghost" id="COMPANY_BTN">Компания</button>
     <button class="btn-ghost" id="BACKUP_BTN">Бэкап</button>
@@ -401,6 +416,31 @@ input,select,textarea{font-family:var(--fb);font-size:15px}
     <div class="sheet-foot">
       <button class="btn-ghost" id="CO_CANCEL">Отмена</button>
       <button class="btn btn-primary" id="CO_SAVE">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADS SHEET -->
+<div class="overlay" id="LEADSMODAL">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Заявки <span class="count" id="LEADS_COUNT" style="color:var(--light);font-weight:400;font-size:14px"></span></h2>
+      <button class="x" id="LEADS_X" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="leads-filter">
+        <select id="LEADS_FILTER">
+          <option value="all">Все статусы</option>
+          <option value="new">Новые</option>
+          <option value="called">Позвонил</option>
+          <option value="done">Закрыто</option>
+        </select>
+        <button class="btn-ghost" id="LEADS_REFRESH" style="min-height:38px">Обновить</button>
+      </div>
+      <div id="LEADS_LIST"></div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-ghost" id="LEADS_CLOSE" style="flex:1">Готово</button>
     </div>
   </div>
 </div>
@@ -1165,6 +1205,70 @@ async function makeBackup(){
   }
 }
 
+// ══ ЗАЯВКИ (мини-CRM) ══
+var leads=[];
+var LEAD_TYPES={order:'Заявка',cart:'Заказ',lead:'Заявка',b2b:'B2B',contact:'Контакт'};
+var LEAD_STATUS={new:'Новая',called:'Позвонил',done:'Закрыто'};
+function fmtLeadDate(s){ try{var d=new Date(s);return d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){return '';} }
+async function openLeads(){
+  $('LEADSMODAL').classList.add('open'); lockScroll(true);
+  await loadLeads();
+}
+function closeLeads(){ $('LEADSMODAL').classList.remove('open'); lockScroll(false); }
+async function loadLeads(){
+  $('LEADS_LIST').innerHTML='<div class="leads-empty">Загрузка…</div>';
+  try{
+    var res=await sb.from('leads').select('*').order('created_at',{ascending:false}).limit(300);
+    if(res.error)throw res.error;
+    leads=res.data||[];
+    renderLeads();
+  }catch(e){ $('LEADS_LIST').innerHTML='<div class="leads-empty">Не удалось загрузить заявки.</div>'; }
+}
+function renderLeads(){
+  var fil=$('LEADS_FILTER').value;
+  var rows=leads.filter(function(l){return fil==='all'||l.status===fil;});
+  var newCount=leads.filter(function(l){return l.status==='new';}).length;
+  $('LEADS_COUNT').textContent='· новых: '+newCount+' / всего '+leads.length;
+  var el=$('LEADS_LIST');
+  if(!rows.length){ el.innerHTML='<div class="leads-empty">Заявок нет.</div>'; return; }
+  var h='';
+  for(var i=0;i<rows.length;i++){
+    var l=rows[i];
+    var body='';
+    if(l.product)body+='<div class="lead-body">📦 '+esc(l.product)+(l.amount?(' · <span class="lead-amount">'+fmtPrice(l.amount)+'</span>'):'')+'</div>';
+    if(l.message)body+='<div class="lead-body">💬 '+esc(l.message)+'</div>';
+    var opts=Object.keys(LEAD_STATUS).map(function(k){return '<option value="'+k+'"'+(l.status===k?' selected':'')+'>'+LEAD_STATUS[k]+'</option>';}).join('');
+    h+='<div class="lead-row'+(l.status==='new'?' is-new':'')+'">'
+      +'<div class="lead-top"><span class="lead-type">'+esc(LEAD_TYPES[l.type]||l.type||'Заявка')+'</span>'
+      +'<span class="lead-name">'+esc(l.name||'—')+'</span>'
+      +(l.phone?'<a class="lead-phone" href="tel:'+esc(l.phone)+'">'+esc(l.phone)+'</a>':'')
+      +'<span class="lead-date">'+fmtLeadDate(l.created_at)+'</span></div>'
+      +body
+      +'<div class="lead-actions"><select data-lead-status="'+l.id+'">'+opts+'</select>'
+      +'<button class="lead-del" data-lead-del="'+l.id+'" aria-label="Удалить">✕</button></div>'
+      +'</div>';
+  }
+  el.innerHTML=h;
+}
+async function setLeadStatus(id,status){
+  try{
+    var res=await sb.from('leads').update({status:status}).eq('id',id);
+    if(res.error)throw res.error;
+    var l=leads.find(function(x){return x.id===id;}); if(l)l.status=status;
+    renderLeads();
+  }catch(e){ toast('Не удалось изменить статус',true); }
+}
+async function deleteLead(id){
+  if(!window.confirm('Удалить заявку?'))return;
+  try{
+    var res=await sb.from('leads').delete().eq('id',id);
+    if(res.error)throw res.error;
+    leads=leads.filter(function(x){return x.id!==id;});
+    renderLeads();
+    toast('Заявка удалена');
+  }catch(e){ toast('Не удалось удалить',true); }
+}
+
 // ══ ДАННЫЕ КОМПАНИИ ══
 var companyData={};
 async function openCompany(){
@@ -1246,6 +1350,15 @@ $('IMPORTMODAL').addEventListener('click',function(e){if(e.target===this)closeIm
 $('CATS_BTN').addEventListener('click',openCatManager);
 $('BACKUP_BTN').addEventListener('click',makeBackup);
 $('COMPANY_BTN').addEventListener('click',openCompany);
+// заявки
+$('LEADS_BTN').addEventListener('click',openLeads);
+$('LEADS_X').addEventListener('click',closeLeads);
+$('LEADS_CLOSE').addEventListener('click',closeLeads);
+$('LEADS_REFRESH').addEventListener('click',loadLeads);
+$('LEADS_FILTER').addEventListener('change',renderLeads);
+$('LEADSMODAL').addEventListener('click',function(e){if(e.target===this)closeLeads();});
+$('LEADS_LIST').addEventListener('change',function(e){var s=e.target.closest('[data-lead-status]');if(s)setLeadStatus(parseInt(s.getAttribute('data-lead-status'),10),s.value);});
+$('LEADS_LIST').addEventListener('click',function(e){var d=e.target.closest('[data-lead-del]');if(d)deleteLead(parseInt(d.getAttribute('data-lead-del'),10));});
 $('CO_X').addEventListener('click',closeCompany);
 $('CO_CANCEL').addEventListener('click',closeCompany);
 $('CO_SAVE').addEventListener('click',saveCompany);

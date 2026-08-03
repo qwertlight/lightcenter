@@ -454,7 +454,7 @@ footer{background:var(--dark)}
   </div>
   <div class="fbot">
     <div class="fcopy">© 2025 LightCenter.kz — Реализация и продажа светооборудования</div>
-    <div class="fleg"><a href="#">Конфиденциальность</a><a href="#">Оферта</a></div>
+    <div class="fleg"><a href="privacy.html">Конфиденциальность</a><a href="oferta.html">Оферта</a></div>
   </div>
 </footer>
 
@@ -665,7 +665,7 @@ async function orderCart() {
     + waLines.join('\n') + '\n\n'
     + 'Итого: ' + fmtPrice(total);
 
-  var sent = await sendToTelegram(tgText);
+  var sent = await sendToTelegram(tgText, { type: 'cart', order_id: orderId, product: waLines.join('; '), amount: total });
   openWhatsApp(waText);
 
   if (sent) {
@@ -802,7 +802,7 @@ async function submitOrder() {
     + 'Телефон: ' + phoneRaw
     + (msgRaw ? '\nКомментарий: ' + msgRaw : '');
 
-  var sent = await sendToTelegram(tgText);
+  var sent = await sendToTelegram(tgText, { type: 'order', order_id: orderId, name: nameRaw, phone: phoneRaw, message: msgRaw, product: product, amount: mProd ? mProd.price : null });
   openWhatsApp(waText);
   closeOrder(); closeModal();
 

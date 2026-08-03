@@ -622,7 +622,7 @@ footer{background:var(--dark)}
   </div>
   <div class="fbot">
     <div class="fcopy">© 2025 LightCenter.kz — Реализация и продажа светооборудования</div>
-    <div class="fleg"><a href="#">Конфиденциальность</a><a href="#">Оферта</a></div>
+    <div class="fleg"><a href="privacy.html">Конфиденциальность</a><a href="oferta.html">Оферта</a></div>
   </div>
 </footer>
 
@@ -712,7 +712,7 @@ async function submitB2B() {
     + 'Телефон: ' + phone + '\n'
     + 'Тип: ' + type;
 
-  var sent = await sendToTelegram(tgText);
+  var sent = await sendToTelegram(tgText, { type: 'b2b', order_id: orderId, name: name, phone: phone, message: 'Компания: ' + (company || '—') + ' · Тип: ' + type });
   openWhatsApp(waText);
 
   if (sent) {
