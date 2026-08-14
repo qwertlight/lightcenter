@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Каталог освещения — LightCenter.kz | 298 позиций в наличии</title>
-<meta name="description" content="Каталог светильников LightCenter. 298 позиций в наличии: магнитные треки 48V, споты, LED-ленты, блоки питания. Оптовые цены. Доставка по Казахстану.">
+<title>Каталог освещения — LightCenter.kz | Магнитные треки, споты, LED-ленты</title>
+<meta name="description" content="Каталог светильников LightCenter в Алматы: магнитные треки 48V, споты, LED-ленты, блоки питания, профили. Оптовые цены для дизайнеров. Доставка по Казахстану.">
 <link rel="icon" href="img/favicon.ico" type="image/x-icon">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Каталог освещения LightCenter — 298 позиций">
+<meta property="og:title" content="Каталог освещения LightCenter — Алматы">
 <meta property="og:description" content="Магнитные треки, споты, LED-ленты, блоки питания. Все в наличии на складе в Алматы.">
 <meta property="og:image" content="https://lightcenter.kz/img/og-catalog.jpg">
 <meta property="og:url" content="https://lightcenter.kz/catalog.html">
@@ -15,34 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://lightcenter.kz/catalog.html">
 <!-- ANALYTICS -->
-<script>
-(function(){
-  /* ─── Заполни реальными ID из своих кабинетов, иначе трекинг не включится ─── */
-  var YM_ID = 0;                 /* Яндекс.Метрика: номер счётчика (число) */
-  var GA_ID = 'G-XXXXXXXXXX';    /* GA4 Measurement ID */
-  var AW_ID = 'AW-XXXXXXXXXX';   /* Google Ads: тег конверсий */
-  var FB_ID = 'XXXXXXXXXXXXXXX'; /* Meta Pixel ID */
-  var ok = function(v){ return v && String(v).indexOf('X') === -1; };
-
-  if (ok(YM_ID)) { try {
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r)return;}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
-    ym(YM_ID,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
-    window.LC_YM_ID = YM_ID;
-  } catch(e){} }
-
-  if (ok(GA_ID)) { try {
-    var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(s);
-    window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};
-    gtag('js',new Date());gtag('config',GA_ID);
-    if (ok(AW_ID)) gtag('config',AW_ID);
-  } catch(e){} }
-
-  if (ok(FB_ID)) { try {
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init',FB_ID);fbq('track','PageView');
-  } catch(e){} }
-})();
-</script>
+<script src="js/analytics.js"></script>
 <!-- /ANALYTICS -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -175,6 +148,7 @@ footer{padding-bottom:env(safe-area-inset-bottom,0)}
 .mnav:hover{background:var(--white)}
 .mnav:active{transform:translateY(-50%) scale(.92)}
 .mprev{left:12px}.mnext{right:12px}
+.mnav.hidden,.mdots.hidden{display:none}
 .mdots{position:absolute;left:0;right:0;bottom:12px;display:flex;gap:7px;justify-content:center;align-items:center;z-index:2}
 .mdot{width:7px;height:7px;border-radius:50%;background:rgba(28,28,26,.28);cursor:pointer;transition:background .15s,transform .15s}
 .mdot.on{background:var(--gold);transform:scale(1.25)}
@@ -620,7 +594,10 @@ function addCart(gi, qty) {
   var p = P[gi];
   var ex = cart.find(function(c) { return c.id === p.id; });
   if (ex) { ex.qty += qty } else { cart.push({ id: p.id, name: p.name, price: p.price, unit: p.unit, img: p.img, qty: qty }); }
-  updateBadges(); renderCart(); saveCart(); toast('🛒 ' + p.name + ' — в корзине');
+  updateBadges(); renderCart(); saveCart(); toast(
+    if (window.LC && LC.analytics) {
+    LC.analytics.addToCart({ id: p.id, name: p.name, cat: p.cat, price: p.price, qty: qty });
+  }'🛒 ' + p.name + ' — в корзине');
 }
 function renderCart() {
   var el = document.getElementById('CL'), cf = document.getElementById('CF'), clr = document.getElementById('CCLEAR');
@@ -670,9 +647,12 @@ async function orderCart() {
 
   if (sent) {
     toast('✅ Заказ ' + orderId + ' отправлен!');
-    // Цель конверсии Google Ads — подставь ярлык из кабинета: 'AW-XXXXXXXXXX/XXXXXXXX'
-    if (window.gtag) gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXXX/XXXXXXXX' });
-    if (window.ym && window.LC_YM_ID) ym(window.LC_YM_ID, 'reachGoal', 'order');
+    if (window.LC && LC.analytics) {
+      var gaItems = cart.map(function (c) {
+        return { item_id: String(c.id), item_name: c.name, price: c.price, quantity: c.qty };
+      });
+      LC.analytics.purchaseIntent(orderId, gaItems, total);
+    }
   } else {
     toast('⚠️ Заказ ушёл в WhatsApp.');
   }
@@ -720,6 +700,7 @@ function openModal(gi) {
   document.getElementById('MO').classList.add('open');
   document.body.style.overflow = 'hidden';
   addRecent(p.id);
+  if (window.LC && LC.analytics) LC.analytics.viewItem(p);
 }
 function closeModal() { document.getElementById('MO').classList.remove('open'); document.body.style.overflow = ''; }
 
@@ -808,9 +789,9 @@ async function submitOrder() {
 
   if (sent) {
     toast('✅ Заявка ' + orderId + ' отправлена!');
-    // Цель конверсии Google Ads — подставь ярлык из кабинета: 'AW-XXXXXXXXXX/XXXXXXXX'
-    if (window.gtag) gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXXX/XXXXXXXX' });
-    if (window.ym && window.LC_YM_ID) ym(window.LC_YM_ID, 'reachGoal', 'order');
+    if (window.LC && LC.analytics) {
+      LC.analytics.lead(product, mProd ? mProd.price : 0);
+    }
   } else {
     toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
   }
