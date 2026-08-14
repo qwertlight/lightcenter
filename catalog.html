@@ -644,7 +644,7 @@ async function orderCart() {
   var sent = await sendToTelegram(tgText, { type: 'cart', order_id: orderId, product: waLines.join('; '), amount: total });
   openWhatsApp(waText);
 
-  if (sent) {
+if (sent) {
     toast('✅ Заказ ' + orderId + ' отправлен!');
     if (window.LC && LC.analytics) {
       var gaItems = cart.map(function (c) {
@@ -786,19 +786,15 @@ async function submitOrder() {
   openWhatsApp(waText);
   closeOrder(); closeModal();
 
-  if (sent) {
-    toast('✅ Заявка ' + orderId + ' отправлена!');
-    if (window.LC && LC.analytics) {
-      LC.analytics.lead(product, mProd ? mProd.price : 0);
+if (sent) {
+      toast('✅ Заявка ' + orderId + ' отправлена!');
+      if (window.LC && LC.analytics) {
+        LC.analytics.lead(product, mProd ? mProd.price : 0);
+      }
+    } else {
+      toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
     }
-  } else {
-    toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
   }
-}
-  } else {
-    toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
-  }
-}
 
 // ── DRAWERS ──
 function openCart() { renderCart(); document.getElementById('CO').classList.add('open'); document.body.style.overflow = 'hidden'; }
