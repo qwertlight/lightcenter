@@ -795,6 +795,10 @@ async function submitOrder() {
     toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
   }
 }
+  } else {
+    toast('⚠️ Заявка ушла в WhatsApp. Telegram недоступен.');
+  }
+}
 
 // ── DRAWERS ──
 function openCart() { renderCart(); document.getElementById('CO').classList.add('open'); document.body.style.overflow = 'hidden'; }
