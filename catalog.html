@@ -598,6 +598,7 @@ function addCart(gi, qty) {
   if (window.LC && LC.analytics) {
     LC.analytics.addToCart({ id: p.id, name: p.name, cat: p.cat, price: p.price, qty: qty });
   }
+}
 function renderCart() {
   var el = document.getElementById('CL'), cf = document.getElementById('CF'), clr = document.getElementById('CCLEAR');
   if (!cart.length) { el.innerHTML = '<div class="dempty">🛒<br>Корзина пуста<br><a href="catalog.html" class="btn-o" style="margin-top:15px;padding:8px 16px;display:inline-flex">Перейти в каталог</a></div>'; cf.style.display = 'none'; if (clr) clr.style.display = 'none'; return; }
@@ -825,6 +826,7 @@ window.addEventListener('scroll', function() {
 // ── COOKIE CONSENT ──
 function acceptCookies() {
   try { localStorage.setItem('lc_cookies', '1'); } catch(e) {}
+  if (window.LC && LC.analytics) LC.analytics.consent(true);
   var el = document.getElementById('COOKIES');
   if (el) el.classList.remove('show');
 }
