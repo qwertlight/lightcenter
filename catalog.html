@@ -594,11 +594,10 @@ function addCart(gi, qty) {
   var p = P[gi];
   var ex = cart.find(function(c) { return c.id === p.id; });
   if (ex) { ex.qty += qty } else { cart.push({ id: p.id, name: p.name, price: p.price, unit: p.unit, img: p.img, qty: qty }); }
-  updateBadges(); renderCart(); saveCart(); toast(
-    if (window.LC && LC.analytics) {
+  updateBadges(); renderCart(); saveCart(); toast('🛒 ' + p.name + ' — в корзине');
+  if (window.LC && LC.analytics) {
     LC.analytics.addToCart({ id: p.id, name: p.name, cat: p.cat, price: p.price, qty: qty });
-  }'🛒 ' + p.name + ' — в корзине');
-}
+  }
 function renderCart() {
   var el = document.getElementById('CL'), cf = document.getElementById('CF'), clr = document.getElementById('CCLEAR');
   if (!cart.length) { el.innerHTML = '<div class="dempty">🛒<br>Корзина пуста<br><a href="catalog.html" class="btn-o" style="margin-top:15px;padding:8px 16px;display:inline-flex">Перейти в каталог</a></div>'; cf.style.display = 'none'; if (clr) clr.style.display = 'none'; return; }
