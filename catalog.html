@@ -18,7 +18,6 @@
 <script src="js/analytics.js"></script>
 <!-- /ANALYTICS -->
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -642,8 +641,10 @@ async function orderCart() {
     + waLines.join('\n') + '\n\n'
     + 'Итого: ' + fmtPrice(total);
 
+    var waWin = window.open('', '_blank');
   var sent = await sendToTelegram(tgText, { type: 'cart', order_id: orderId, product: waLines.join('; '), amount: total });
-  openWhatsApp(waText);
+  var waUrl = 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(waText);
+  if (waWin) { waWin.location.href = waUrl; } else { window.location.href = waUrl; }
 
 if (sent) {
     toast('✅ Заказ ' + orderId + ' отправлен!');
@@ -783,8 +784,10 @@ async function submitOrder() {
     + 'Телефон: ' + phoneRaw
     + (msgRaw ? '\nКомментарий: ' + msgRaw : '');
 
+    var waWin = window.open('', '_blank');
   var sent = await sendToTelegram(tgText, { type: 'order', order_id: orderId, name: nameRaw, phone: phoneRaw, message: msgRaw, product: product, amount: mProd ? mProd.price : null });
-  openWhatsApp(waText);
+  var waUrl = 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(waText);
+  if (waWin) { waWin.location.href = waUrl; } else { window.location.href = waUrl; }
   closeOrder(); closeModal();
 
 if (sent) {
@@ -868,38 +871,78 @@ function navSearchCatalog() {
 
 // ── PDF СМЕТА ──
 function downloadPdfCart() {
-  if (!cart.length) return;
-  var total = 0;
-  var rows = '';
-  for (var i = 0; i < cart.length; i++) {
-    var c = cart[i]; var sum = c.price * c.qty; total += sum;
-    rows += '<tr><td style="padding:8px;border-bottom:1px solid #eee">' + (i+1) + '</td>'
-      + '<td style="padding:8px;border-bottom:1px solid #eee">' + c.name + '</td>'
-      + '<td style="padding:8px;border-bottom:1px solid #eee;text-align:center">' + c.qty + ' ' + c.unit + '</td>'
-      + '<td style="padding:8px;border-bottom:1px solid #eee;text-align:right">' + fmtPrice(c.price) + '</td>'
-      + '<td style="padding:8px;border-bottom:1px solid #eee;text-align:right">' + fmtPrice(sum) + '</td></tr>';
-  }
-  var orderId = generateOrderId();
-  var html = '<div style="font-family:Arial,sans-serif;color:#1C1C1A;padding:20px">'
-    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;border-bottom:2px solid #1C1C1A;padding-bottom:15px">'
-    + '<div><div style="font-size:22px;font-weight:700;letter-spacing:2px">LIGHT CENTER</div><div style="font-size:11px;color:#888;margin-top:2px">ESTD 2020 · lightcenter.kz</div></div>'
-    + '<div style="text-align:right"><div style="font-size:11px;color:#888">Коммерческое предложение</div><div style="font-size:14px;font-weight:600">' + orderId + '</div><div style="font-size:11px;color:#888">' + new Date().toLocaleDateString('ru-RU') + '</div></div></div>'
-    + '<table style="width:100%;border-collapse:collapse;font-size:13px">'
-    + '<thead><tr style="background:#f5f5f5"><th style="padding:8px;text-align:left">№</th><th style="padding:8px;text-align:left">Наименование</th><th style="padding:8px;text-align:center">Кол-во</th><th style="padding:8px;text-align:right">Цена</th><th style="padding:8px;text-align:right">Сумма</th></tr></thead>'
-    + '<tbody>' + rows + '</tbody>'
-    + '<tfoot><tr><td colspan="4" style="padding:12px 8px;font-weight:700;font-size:15px;text-align:right;border-top:2px solid #1C1C1A">Итого:</td>'
-    + '<td style="padding:12px 8px;font-weight:700;font-size:15px;text-align:right;border-top:2px solid #1C1C1A">' + fmtPrice(total) + '</td></tr></tfoot></table>'
-    + '<div style="margin-top:30px;font-size:12px;color:#888;border-top:1px solid #eee;padding-top:15px">'
-    + '<p>📞 +7 (776) 000-72-32 · +7 (776) 478-56-56</p>'
-    + '<p>📍 Алматы, ул. Сейфуллина 524</p>'
-    + '<p>✉️ info@lightcenter.kz</p></div></div>';
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  document.body.appendChild(el);
-  html2pdf().set({ margin: 10, filename: 'Smeta_LightCenter_' + orderId.replace('#','') + '.pdf', html2canvas: { scale: 2 }, jsPDF: { format: 'a4' } }).from(el).save().then(function() { document.body.removeChild(el); });
-}
+  if (!cart.length) { toast('⚠️ Корзина пуста'); return; }
 
-// ── RECENTLY VIEWED ──
+  // Окно открываем синхронно — иначе Safari заблокирует его как попап
+  var w = window.open('', '_blank');
+  if (!w) { toast('⚠️ Разрешите всплывающие окна, чтобы сохранить смету'); return; }
+
+  var total = 0, rows = '';
+  for (var i = 0; i < cart.length; i++) {
+    var c = cart[i];
+    var sum = c.price * c.qty;
+    total += sum;
+    rows += '<tr>'
+      + '<td>' + (i + 1) + '</td>'
+      + '<td>' + escHtml(c.name) + '</td>'
+      + '<td class="c">' + c.qty + ' ' + escHtml(c.unit) + '</td>'
+      + '<td class="r">' + fmtPrice(c.price) + '</td>'
+      + '<td class="r">' + fmtPrice(sum) + '</td>'
+      + '</tr>';
+  }
+
+  var orderId = generateOrderId();
+  var dateStr = new Date().toLocaleDateString('ru-RU');
+
+  var doc = '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">'
+    + '<meta name="viewport" content="width=device-width, initial-scale=1">'
+    + '<title>Смета ' + orderId + ' — LightCenter</title>'
+    + '<style>'
+    + '@page{size:A4;margin:14mm}'
+    + '*{box-sizing:border-box}'
+    + 'body{font-family:Arial,Helvetica,sans-serif;color:#1C1C1A;margin:0;padding:20px;font-size:13px;line-height:1.5}'
+    + '.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1C1C1A;padding-bottom:14px;margin-bottom:26px}'
+    + '.br{font-size:22px;font-weight:700;letter-spacing:2px}'
+    + '.sb{font-size:11px;color:#888;margin-top:3px}'
+    + '.no{font-size:14px;font-weight:600}'
+    + '.mt{text-align:right}'
+    + 'table{width:100%;border-collapse:collapse}'
+    + 'th{background:#f5f5f5;padding:8px;text-align:left;font-size:12px}'
+    + 'th.c,td.c{text-align:center}th.r,td.r{text-align:right}'
+    + 'td{padding:8px;border-bottom:1px solid #eee}'
+    + 'tfoot td{border-top:2px solid #1C1C1A;border-bottom:none;font-weight:700;font-size:15px;padding-top:12px}'
+    + '.ft{margin-top:28px;padding-top:14px;border-top:1px solid #eee;font-size:12px;color:#888;line-height:1.9}'
+    + '.bar{margin-bottom:20px}'
+    + '.bar button{font:inherit;padding:11px 22px;border:none;border-radius:8px;background:#C9943A;color:#fff;cursor:pointer;min-height:44px}'
+    + '.bar button:active{opacity:.75}'
+    + '@media print{.bar{display:none}body{padding:0}}'
+    + '</style></head><body>'
+    + '<div class="bar"><button onclick="window.print()">📄 Сохранить в PDF</button></div>'
+    + '<div class="hd">'
+    + '<div><div class="br">LIGHT CENTER</div><div class="sb">ESTD 2020 · lightcenter.kz</div></div>'
+    + '<div class="mt"><div class="sb">Коммерческое предложение</div>'
+    + '<div class="no">' + orderId + '</div><div class="sb">' + dateStr + '</div></div>'
+    + '</div>'
+    + '<table>'
+    + '<thead><tr><th>№</th><th>Наименование</th><th class="c">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr></thead>'
+    + '<tbody>' + rows + '</tbody>'
+    + '<tfoot><tr><td colspan="4" class="r">Итого:</td><td class="r">' + fmtPrice(total) + '</td></tr></tfoot>'
+    + '</table>'
+    + '<div class="ft">📞 +7 (776) 000-72-32 · +7 (776) 478-56-56<br>'
+    + '📍 Алматы, ул. Сейфуллина 524<br>'
+    + '✉️ info@lightcenter.kz</div>'
+    + '</body></html>';
+
+  try {
+    w.document.open();
+    w.document.write(doc);
+    w.document.close();
+    setTimeout(function () { try { w.focus(); w.print(); } catch (e) {} }, 400);
+  } catch (e) {
+    toast('⚠️ Не удалось открыть смету');
+  }
+}
+  // ── RECENTLY VIEWED ──
 function renderRecent() {
   var ids = loadRecent();
   var sec = document.getElementById('RECENT_SEC');
